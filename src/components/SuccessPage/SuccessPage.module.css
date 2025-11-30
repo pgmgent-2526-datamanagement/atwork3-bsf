@@ -1,0 +1,146 @@
+/* components/SuccessPage/SuccessPage.module.css */
+
+.success-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #050308;
+}
+
+.success-page__background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.success-page__confetti {
+  position: absolute;
+  top: -10%;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 999px;
+}
+
+.success-page__content {
+  position: relative;
+  z-index: 1;
+  max-width: 28rem;
+  text-align: center;
+}
+
+/* Icon */
+
+.success-page__icon-wrapper {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.success-page__icon-glow {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, #ec4899, #a855f7, #22d3ee);
+  border-radius: 999px;
+  filter: blur(20px);
+}
+
+.success-page__icon {
+  position: relative;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 999px;
+  background-image: linear-gradient(to bottom right, #ec4899, #a855f7, #22d3ee);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-page__icon-party {
+  width: 4rem;
+  height: 4rem;
+  color: #ffffff;
+}
+
+/* Text */
+
+.success-page__title {
+  margin: 0 0 1rem;
+  font-size: 3rem;
+  line-height: 1.1;
+  background-image: linear-gradient(to right, #7b2ff7, #f107a3, #00eaff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.success-page__film {
+  margin-bottom: 2rem;
+}
+
+.success-page__film-label {
+  margin: 0 0 0.75rem;
+  color: #020304;
+  font-size: 0.95rem;
+}
+
+.success-page__film-tag {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border-radius: 1.5rem;
+  border: 2px solid #ec4899;
+  background-image: linear-gradient(
+    to right,
+    rgba(236, 72, 153, 0.2),
+    rgba(168, 85, 247, 0.2),
+    rgba(34, 211, 238, 0.2)
+  );
+}
+
+.success-page__film-tag span {
+  font-size: 1.6rem;
+  color: #ffffff;
+}
+
+/* Floating icons */
+
+.success-page__floating-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.success-page__floating-icon {
+  display: inline-flex;
+}
+
+.success-page__sparkle-icon--pink {
+  width: 2rem;
+  height: 2rem;
+  color: #f472d0;
+}
+
+.success-page__sparkle-icon--cyan {
+  width: 2rem;
+  height: 2rem;
+  color: #22d3ee;
+}
+
+.success-page__heart-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #c4b5fd;
+  fill: #c4b5fd;
+}
+
+/* Subtitle */
+
+.success-page__subtitle {
+  margin-top: 2rem;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
