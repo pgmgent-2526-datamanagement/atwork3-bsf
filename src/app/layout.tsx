@@ -7,7 +7,6 @@ const forum = Forum({
   variable: "--font-forum",
 });
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -15,10 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${forum.variable} antialiased`}
-      >
-        {children}
+      <body className={`${forum.variable} antialiased`}>
+        <main>{children}</main>
       </body>
     </html>
   );
