@@ -1,0 +1,121 @@
+/* components/HomePage/HomePage.module.css */
+
+.homepage {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #050308;
+}
+
+.homepage__background {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.homepage__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+.homepage__sparkles-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.homepage__sparkle {
+  display: inline-flex;
+}
+
+.homepage__sparkle-icon--small-pink {
+  width: 2rem;
+  height: 2rem;
+  color: #f472d0;
+}
+
+.homepage__sparkle-icon--large-cyan {
+  width: 3rem;
+  height: 3rem;
+  color: #22d3ee;
+}
+
+.homepage__sparkle-icon--small-yellow {
+  width: 2rem;
+  height: 2rem;
+  color: #facc15;
+}
+
+.homepage__title {
+  margin: 0 0 3rem;
+}
+
+.homepage__title-line--top,
+.homepage__title-line--middle {
+  display: block;
+  margin-bottom: 0.25rem;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.homepage__title-line--top {
+  font-size: 2.25rem;
+  line-height: 1.1;
+  background-image: linear-gradient(to right, #ec4899, #a855f7, #22d3ee);
+}
+
+.homepage__title-line--middle {
+  font-size: 3rem;
+  line-height: 1.1;
+  background-image: linear-gradient(to right, #22d3ee, #ec4899, #facc15);
+}
+
+.homepage__title-line--bottom {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.8rem;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.homepage__start-button {
+  position: relative;
+  padding: 1.5rem 3rem;
+  border: none;
+  border-radius: 999px;
+  background-image: linear-gradient(to right, #ec4899, #a855f7, #22d3ee);
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.homepage__start-button-glow {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, #f472d0, #c4b5fd, #22d3ee);
+  filter: blur(18px);
+  opacity: 0.7;
+}
+
+.homepage__start-button-label {
+  position: relative;
+  z-index: 1;
+}
+
+.homepage__subtitle {
+  margin-top: 2rem;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
