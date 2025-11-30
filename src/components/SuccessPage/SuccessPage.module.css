@@ -40,14 +40,6 @@
   justify-content: center;
 }
 
-.success-page__icon-glow {
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(to right, #ec4899, #a855f7, #22d3ee);
-  border-radius: 999px;
-  filter: blur(20px);
-}
-
 .success-page__icon {
   position: relative;
   width: 8rem;
@@ -83,7 +75,10 @@
 
 .success-page__film-label {
   margin: 0 0 0.75rem;
-  color: #020304;
+  background-image: linear-gradient(to right, #7b2ff7, #f107a3, #00eaff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   font-size: 0.95rem;
 }
 
@@ -141,6 +136,9 @@
 
 .success-page__subtitle {
   margin-top: 2rem;
-  color: #9ca3af;
+  background-image: linear-gradient(to right, #7b2ff7, #f107a3, #00eaff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   font-size: 0.95rem;
 }
