@@ -12,12 +12,18 @@
   top: 0;
   z-index: 10;
   padding: 1.5rem;
-  background: linear-gradient(to bottom, #050308, rgba(5, 3, 8, 0.95), transparent);
+  background: linear-gradient(
+    to bottom,
+    #050308,
+    rgba(5, 3, 8, 0.95),
+    transparent
+  );
   backdrop-filter: blur(10px);
   text-align: center;
 }
 
 .voting-page__title {
+  font-family: "Forum", sans-serif;
   margin: 0;
   font-size: 1.5rem;
   background-image: linear-gradient(to right, #f472d0, #c4b5fd, #22d3ee);
