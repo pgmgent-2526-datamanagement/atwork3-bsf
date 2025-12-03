@@ -1,0 +1,209 @@
+/* components/VotingPage/VotingPage.module.css */
+
+.voting-page {
+  position: relative;
+  min-height: 100vh;
+  background-color: #050308;
+  color: #f9f9ff;
+}
+
+.voting-page__header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 1.5rem;
+  background: linear-gradient(
+    to bottom,
+    #050308,
+    rgba(5, 3, 8, 0.95),
+    transparent
+  );
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.voting-page__title {
+  font-family: "Forum", sans-serif;
+  margin: 0;
+  font-size: 1.5rem;
+  background-image: linear-gradient(to right, #f472d0, #c4b5fd, #22d3ee);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.voting-page__subtitle {
+  margin-top: 0.5rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.voting-page__list {
+  padding: 0 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.voting-page__film-card {
+  width: 100%;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid #374151;
+  background: linear-gradient(to right, #111827, #1f2933);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.voting-page__film-card:hover {
+  border-color: #ec4899;
+}
+
+.voting-page__film-number {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-image: linear-gradient(to bottom right, #ec4899, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voting-page__film-number span {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.voting-page__film-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.voting-page__film-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #22d3ee;
+  flex-shrink: 0;
+}
+
+.voting-page__film-title {
+  color: #ffffff;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voting-page__film-arrow {
+  color: #9ca3af;
+  font-size: 1.25rem;
+}
+
+/* Modal */
+
+.voting-page__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 40;
+}
+
+.voting-page__modal-wrapper {
+  position: fixed;
+  inset-inline: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 26rem;
+  margin: 0 auto;
+  z-index: 50;
+}
+
+.voting-page__modal {
+  padding: 2rem;
+  border-radius: 1.75rem;
+  border: 2px solid #ec4899;
+  background-image: linear-gradient(
+    to bottom right,
+    #111827,
+    rgba(76, 29, 149, 0.2),
+    #111827
+  );
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.voting-page__modal-icon-wrapper {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.voting-page__modal-icon {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background-image: linear-gradient(to bottom right, #ec4899, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voting-page__modal-icon-check {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #ffffff;
+}
+
+.voting-page__modal-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.voting-page__modal-text {
+  margin: 0 0 1.75rem;
+  text-align: center;
+  color: #e5e7eb;
+}
+
+.voting-page__modal-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.voting-page__modal-button--secondary,
+.voting-page__modal-button--primary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.9rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.voting-page__modal-button--secondary {
+  background-color: #111827;
+  border: 1px solid #374151;
+  color: #f9f9ff;
+}
+
+.voting-page__modal-button--primary {
+  background-image: linear-gradient(to right, #ec4899, #a855f7);
+  color: #ffffff;
+}
+
+.voting-page__modal-button-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
