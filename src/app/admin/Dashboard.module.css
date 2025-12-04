@@ -1,0 +1,100 @@
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  color: #2b5eff;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Status indicators */
+.status {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #444;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.open {
+  background-color: #ff4444;
+}
+
+.closed {
+  background-color: #999;
+}
+
+/* Navigation */
+.nav {
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #f6f6f9;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.navButton:hover {
+  background: #ececff;
+}
+
+.active {
+  background: #e4e7ff;
+  border-color: #546aff;
+  color: #2b46ff;
+}
+
+/* Content area */
+.content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
