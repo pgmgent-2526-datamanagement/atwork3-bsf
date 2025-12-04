@@ -12,3 +12,5 @@ export default function Page() {
 
   return <HomePage onStartVoting={handleStartVoting} />;
 }
+
+
