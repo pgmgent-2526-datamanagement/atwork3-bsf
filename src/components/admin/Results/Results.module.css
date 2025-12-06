@@ -260,6 +260,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   cursor: pointer;
+  font-family: "Forum", sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
 
@@ -267,11 +268,7 @@
   align-items: center;
   gap: 0.4rem;
 
-  transition:
-    background 0.2s,
-    border-color 0.2s,
-    box-shadow 0.2s,
-    color 0.2s,
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s,
     transform 0.15s ease;
 }
 

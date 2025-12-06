@@ -25,6 +25,7 @@
   padding: 1.5rem;
   border: 2px solid #e5e7eb;
   border-radius: 0.5rem;
+  font-family: "Forum", sans-serif;
   background: white;
   cursor: pointer;
   transition: 0.2s;
@@ -70,6 +71,7 @@
 
 .quickExportButton {
   width: 100%;
+  font-family: "Forum", sans-serif;
 }
 
 /******** HISTORY ********/

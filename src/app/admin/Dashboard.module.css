@@ -1,3 +1,4 @@
+
 .container {
   padding: 20px;
   max-width: 1200px;
@@ -12,7 +13,7 @@
   padding: 14px 20px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   margin-bottom: 20px;
 }
 
@@ -65,12 +66,15 @@
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .navButton {
   display: flex;
   align-items: center;
+  font-family: "Forum", sans-serif;
+  text-decoration: none;
+  color: #161515;
   gap: 6px;
   padding: 8px 14px;
   border-radius: 8px;
@@ -96,5 +100,5 @@
   background: #fff;
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
