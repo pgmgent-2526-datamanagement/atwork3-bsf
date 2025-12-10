@@ -10,20 +10,14 @@ export async function POST(req: Request) {
     const vote = await voteService.castVote(supabase, {
       filmId: body.filmId,
       deviceHash: body.deviceHash,
-      ipAddress: req.headers.get("x-forwarded-for"),
+      ipAddress: req.headers.get("x-forwarded-for") ?? null,
       source: "zaal",
     });
 
     return NextResponse.json({ success: true, vote });
 
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      return NextResponse.json({ success: false, error: err.message }, { status: 400 });
-    }
-    return NextResponse.json(
-      { success: false, error: "Unknown error occurred" },
-      { status: 400 }
-    );
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ success: false, error: message }, { status: 400 });
   }
 }
-
