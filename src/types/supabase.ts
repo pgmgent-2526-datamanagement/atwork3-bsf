@@ -14,26 +14,26 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_user: {
+      admin_users: {
         Row: {
           created_at: string | null
-          email: string
-          id: number
-          password_hash: string
+          first_name: string | null
+          id: string
+          last_name: string | null
           role: string | null
         }
         Insert: {
           created_at?: string | null
-          email: string
-          id?: never
-          password_hash: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
           role?: string | null
         }
         Update: {
           created_at?: string | null
-          email?: string
-          id?: never
-          password_hash?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
           role?: string | null
         }
         Relationships: []
@@ -94,6 +94,7 @@ export type Database = {
           created_at: string | null
           edition_id: number | null
           id: number
+          image_url: string | null
           maker: string | null
           number: number
           tagline: string | null
@@ -104,6 +105,7 @@ export type Database = {
           created_at?: string | null
           edition_id?: number | null
           id?: never
+          image_url?: string | null
           maker?: string | null
           number: number
           tagline?: string | null
@@ -114,6 +116,7 @@ export type Database = {
           created_at?: string | null
           edition_id?: number | null
           id?: never
+          image_url?: string | null
           maker?: string | null
           number?: number
           tagline?: string | null
@@ -224,7 +227,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      Role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -351,6 +354,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      Role: ["admin", "user"],
+    },
   },
 } as const
