@@ -1,4 +1,6 @@
-import { supabase } from "@/lib/supabaseClient"
+import "dotenv/config"
+import { supabaseService } from "../lib/supabaseService"
+
 
 function randomDeviceHash() {
   return `device-${Math.random().toString(36).substring(2, 12)}`
@@ -7,9 +9,11 @@ function randomDeviceHash() {
 async function seed() {
   console.log("🌱 Seeding database (extended)...")
 
+  /* ------------------------------------------------------------------ */
+  /* 1️⃣ Edition                                                         */
+  /* ------------------------------------------------------------------ */
 
-
-  const { data: edition, error: editionError } = await supabase
+  const { data: edition, error: editionError } = await supabaseService
     .from("edition")
     .insert({
       name: "One Minute Festival",
@@ -26,7 +30,9 @@ async function seed() {
 
   const editionId = edition.id
 
-  
+  /* ------------------------------------------------------------------ */
+  /* 2️⃣ Films                                                           */
+  /* ------------------------------------------------------------------ */
 
   const filmData = [
     { number: 1, title: "Blink", maker: "Alex Lee", tagline: "Life in a second" },
@@ -43,7 +49,7 @@ async function seed() {
     { number: 12, title: "Fade", maker: "Lucas Moreau", tagline: "Almost gone" },
   ]
 
-  const { data: films, error: filmError } = await supabase
+  const { data: films, error: filmError } = await supabaseService
     .from("film")
     .insert(
       filmData.map(film => ({
@@ -56,11 +62,13 @@ async function seed() {
   if (filmError) throw filmError
   console.log(`✅ ${films.length} films created`)
 
-
+  /* ------------------------------------------------------------------ */
+  /* 3️⃣ Vote sessions                                                   */
+  /* ------------------------------------------------------------------ */
 
   const now = new Date()
 
-  const { data: sessions, error: sessionError } = await supabase
+  const { data: sessions, error: sessionError } = await supabaseService
     .from("vote_session")
     .insert([
       {
@@ -86,7 +94,9 @@ async function seed() {
   const onlineSession = sessions.find(s => s.type === "online")
   if (!onlineSession) throw new Error("Online session not found")
 
-
+  /* ------------------------------------------------------------------ */
+  /* 4️⃣ Votes                                                           */
+  /* ------------------------------------------------------------------ */
 
   const votes = []
 
@@ -102,7 +112,7 @@ async function seed() {
     })
   }
 
-  const { error: voteError } = await supabase.from("vote").insert(votes)
+  const { error: voteError } = await supabaseService.from("vote").insert(votes)
   if (voteError) throw voteError
 
   console.log(`✅ ${votes.length} votes created`)
