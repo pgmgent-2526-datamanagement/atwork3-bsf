@@ -24,7 +24,7 @@ export async function middleware(req: NextRequest) {
 
   if (!user) {
     // Not logged in
-    return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+    return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
   const userId = user.id;
@@ -39,7 +39,7 @@ export async function middleware(req: NextRequest) {
   if (!admin) {
     // Log out user
     await supabase.auth.signOut();
-    return NextResponse.redirect(new URL("/auth/sign-in?error=no-admin", req.url));
+    return NextResponse.redirect(new URL("/auth/login?error=no-admin", req.url));
   }
 
   // OK — user is admin
