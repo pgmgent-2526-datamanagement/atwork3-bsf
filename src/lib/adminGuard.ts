@@ -1,24 +1,48 @@
-import { supabaseServer } from "@/lib/supabaseServer";
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import type { Database } from "@/types/supabase";
 
 export async function requireAdmin() {
-  const supabase = await supabaseServer();
+  // ❗ cookies() is sync
+  const cookieStore = await cookies();
+
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach((c) => {
+              cookieStore.set(c.name, c.value, c.options);
+            });
+          } catch {
+            // ⚠️ In sommige contexts (bijv. Server Components)
+            // mag je geen cookies zetten → safe to ignore
+          }
+        },
+      },
+    }
+  );
 
   const {
     data: { user },
-    error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError || !user) {
+  if (!user) {
     throw new Error("UNAUTHORIZED");
   }
 
-  const { data: admin, error } = await supabase
+  const { data: admin } = await supabase
     .from("admin_users")
     .select("id")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
-  if (error || !admin) {
+  if (!admin) {
     throw new Error("FORBIDDEN");
   }
 
