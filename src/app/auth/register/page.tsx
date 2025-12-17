@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../SignUp.module.css";
+import { authClient } from "@/services/authClient";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -17,37 +18,31 @@ export default function SignUpPage() {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setErrorMsg("");
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    if (password !== confirmPassword) {
+      setErrorMsg("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await authClient.register({
         email,
         password,
         first_name: firstName,
         last_name: lastName,
-      }),
-    });
+      });
 
-    const data = await res.json();
-    setLoading(false);
-
-    if (password !== confirmPassword) {
-      setErrorMsg("Passwords do not match");
+      router.push("/auth/sign-in");
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      }
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (!res.ok) {
-      setErrorMsg(data.error);
-      return;
-    }
-
-    router.push("/auth/sign-in");
   }
 
   return (

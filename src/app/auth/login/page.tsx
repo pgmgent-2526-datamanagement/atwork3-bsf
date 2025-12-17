@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../SignUp.module.css";
+import { authClient } from "@/services/authClient";
+
 export default function SignInPage() {
   const router = useRouter();
 
@@ -13,26 +15,19 @@ export default function SignInPage() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    console.log("LOGIN SUBMITTED");
-    setLoading(true);
     setErrorMsg("");
-    console.log("Before fetch");
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    console.log("After fetch", res);
-    const data = await res.json();
-    setLoading(false);
+    setLoading(true);
 
-    if (!res.ok) {
-      setErrorMsg(data.error || "Login failed");
-      return;
+    try {
+      await authClient.login({ email, password });
+      router.push("/admin");
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      }
+    } finally {
+      setLoading(false);
     }
-
-    // Login success → redirect
-    router.push("/admin");
   }
 
   return (
