@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Film, Settings, BarChart3, Download, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Film, Settings, BarChart3, Download } from "lucide-react";
 import styles from "./Dashboard.module.css";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className={styles.container}>
-      
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.left}>
@@ -17,10 +20,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <div className={styles.right}>
-          <Button>
-            <LogOut className="flex items-center gap-4" />
-            Uitloggen
-          </Button>
+          <LogoutButton />
         </div>
       </header>
 
