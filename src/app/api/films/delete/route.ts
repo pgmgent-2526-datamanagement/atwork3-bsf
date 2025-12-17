@@ -9,9 +9,11 @@ export async function DELETE(req: Request) {
   try {
     await filmService.deleteFilm(supabase, body.id);
     return NextResponse.json({ success: true });
-
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ success: false, error: message }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: message },
+      { status: 400 }
+    );
   }
 }

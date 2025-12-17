@@ -8,7 +8,6 @@ export async function GET() {
   try {
     const results = await voteService.getCombinedResults(supabase);
     return NextResponse.json(results);
-
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 400 });

@@ -9,9 +9,12 @@ export async function GET() {
     const films = await filmService.getFilms(supabase);
     return NextResponse.json({ success: true, films });
   } catch (err: unknown) {
-    return NextResponse.json({
-      success: false,
-      error: err instanceof Error ? err.message : "Unknown error"
-    }, { status: 400 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: err instanceof Error ? err.message : "Unknown error",
+      },
+      { status: 400 }
+    );
   }
 }

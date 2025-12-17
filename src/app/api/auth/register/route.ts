@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer"; // server client
+import { supabaseServer } from "@/lib/supabaseServer";
 
 export async function POST(req: Request) {
   const supabase = await supabaseServer();
@@ -38,5 +38,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: insertError.message }, { status: 400 });
   }
 
-  return NextResponse.json({ success: true , message: "User registered successfully"});
+  return NextResponse.json({
+    success: true,
+    message: "User registered successfully",
+  });
 }

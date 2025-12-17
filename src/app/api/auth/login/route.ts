@@ -32,5 +32,9 @@ export async function POST(req: Request) {
     );
   }
 
-  return NextResponse.json({ success: true, admin, message: "Login successful" });
+  return NextResponse.json({
+    success: true,
+    admin,
+    message: "Login successful",
+  });
 }
