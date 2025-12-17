@@ -3,7 +3,7 @@ import { supabaseServer } from "@/lib/supabaseServer";
 import { voteService } from "@/services/voteService";
 
 export async function POST(req: Request) {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
   const body = await req.json();
 
   try {

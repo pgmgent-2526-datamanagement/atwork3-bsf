@@ -3,7 +3,7 @@ import { supabaseServer } from "@/lib/supabaseServer";
 import { filmService } from "@/services/filmService";
 
 export async function GET() {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
 
   try {
     const films = await filmService.getFilms(supabase);

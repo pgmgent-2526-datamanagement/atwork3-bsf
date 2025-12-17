@@ -6,7 +6,7 @@ import { makeTxt, makeExcel } from "@/helpers/exportFile";
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
   const format = new URL(req.url).searchParams.get("format");
 
   try {

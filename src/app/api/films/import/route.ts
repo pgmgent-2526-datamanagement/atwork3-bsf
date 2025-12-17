@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const supabase = supabaseServer();
+    const supabase = await supabaseServer();
     const films = await parseFilmFile(file);
 
     const inserted = await filmService.importFilmsForActiveEdition(

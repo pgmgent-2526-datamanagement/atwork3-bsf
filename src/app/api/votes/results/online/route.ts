@@ -3,7 +3,7 @@ import { supabaseServer } from "@/lib/supabaseServer";
 import { voteService } from "@/services/voteService";
 
 export async function GET() {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
 
   try {
     const results = await voteService.getResultsForSource(supabase, "online");
