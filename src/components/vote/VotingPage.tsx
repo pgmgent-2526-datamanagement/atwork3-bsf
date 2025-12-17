@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import styles from "@/app/vote/zaal/VotingPage.module.css";
 
-import { FilmList } from "@/app/api/film/FilmList";
+import { FilmList } from "@/components/film/FilmList";
 import { ConfirmVoteModal } from "@/components/vote/ConfirmVoteModal";
 
 interface VotingPageProps {
