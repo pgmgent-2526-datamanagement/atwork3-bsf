@@ -1,16 +1,34 @@
-import "dotenv/config"
-import { supabaseService } from "../lib/supabaseService"
+import "dotenv/config";
+import { supabaseService } from "../lib/supabaseService";
 
+/* ------------------------------------------------------------------ */
+/* Helpers                                                            */
+/* ------------------------------------------------------------------ */
 
 function randomDeviceHash() {
-  return `device-${Math.random().toString(36).substring(2, 12)}`
+  return `seed-device-${Math.random().toString(36).substring(2, 12)}`;
 }
 
+/* ------------------------------------------------------------------ */
+/* Seed                                                               */
+/* ------------------------------------------------------------------ */
+
 async function seed() {
-  console.log("🌱 Seeding database (extended)...")
+  console.log("🧹 Resetting database...");
 
   /* ------------------------------------------------------------------ */
-  /* 1️⃣ Edition                                                         */
+  /* 0️⃣ RESET DATABASE (ORDER MATTERS)                                 */
+  /* ------------------------------------------------------------------ */
+
+  await supabaseService.from("vote").delete().neq("id", 0);
+  await supabaseService.from("vote_session").delete().neq("id", 0);
+  await supabaseService.from("film").delete().neq("id", 0);
+  await supabaseService.from("edition").delete().neq("id", 0);
+
+  console.log("✅ Database cleared");
+
+  /* ------------------------------------------------------------------ */
+  /* 2️⃣ EDITION                                                        */
   /* ------------------------------------------------------------------ */
 
   const { data: edition, error: editionError } = await supabaseService
@@ -23,52 +41,90 @@ async function seed() {
       end_time: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
     })
     .select()
-    .single()
+    .single();
 
-  if (editionError) throw editionError
-  console.log("✅ edition created")
-
-  const editionId = edition.id
+  if (editionError) throw editionError;
+  console.log("✅ Edition created");
 
   /* ------------------------------------------------------------------ */
-  /* 2️⃣ Films                                                           */
+  /* 3️⃣ FILMS                                                          */
   /* ------------------------------------------------------------------ */
 
-  const filmData = [
-    { number: 1, title: "Blink", maker: "Alex Lee", tagline: "Life in a second" },
-    { number: 2, title: "One Breath", maker: "Mila Janssen", tagline: "Hold it" },
-    { number: 3, title: "60 Seconds of Fame", maker: "John Smith", tagline: "Your moment" },
-    { number: 4, title: "Stillness", maker: "Eva de Vries", tagline: "Nothing moves" },
+  const filmsData = [
+    {
+      number: 1,
+      title: "Blink",
+      maker: "Alex Lee",
+      tagline: "Life in a second",
+    },
+    {
+      number: 2,
+      title: "One Breath",
+      maker: "Mila Janssen",
+      tagline: "Hold it",
+    },
+    {
+      number: 3,
+      title: "60 Seconds of Fame",
+      maker: "John Smith",
+      tagline: "Your moment",
+    },
+    {
+      number: 4,
+      title: "Stillness",
+      maker: "Eva de Vries",
+      tagline: "Nothing moves",
+    },
     { number: 5, title: "Rush", maker: "Liam O'Connor", tagline: "Too fast" },
     { number: 6, title: "Echo", maker: "Noah Kim", tagline: "What remains" },
-    { number: 7, title: "Pause", maker: "Sophie Müller", tagline: "Stop and look" },
-    { number: 8, title: "Loop", maker: "Carlos Rivera", tagline: "Again and again" },
-    { number: 9, title: "Flash", maker: "Yara El Amrani", tagline: "Gone instantly" },
+    {
+      number: 7,
+      title: "Pause",
+      maker: "Sophie Müller",
+      tagline: "Stop and look",
+    },
+    {
+      number: 8,
+      title: "Loop",
+      maker: "Carlos Rivera",
+      tagline: "Again and again",
+    },
+    {
+      number: 9,
+      title: "Flash",
+      maker: "Yara El Amrani",
+      tagline: "Gone instantly",
+    },
     { number: 10, title: "Drift", maker: "Tom Bakker", tagline: "Let go" },
     { number: 11, title: "Pulse", maker: "Rosa Nguyen", tagline: "Feel it" },
-    { number: 12, title: "Fade", maker: "Lucas Moreau", tagline: "Almost gone" },
-  ]
+    {
+      number: 12,
+      title: "Fade",
+      maker: "Lucas Moreau",
+      tagline: "Almost gone",
+    },
+  ];
 
   const { data: films, error: filmError } = await supabaseService
     .from("film")
     .insert(
-      filmData.map(film => ({
+      filmsData.map((film) => ({
         ...film,
-        edition_id: editionId,
+        edition_id: edition.id,
       }))
     )
-    .select()
+    .select();
 
-  if (filmError) throw filmError
-  console.log(`✅ ${films.length} films created`)
+  if (filmError) throw filmError;
+  console.log(`✅ ${films.length} films created`);
 
   /* ------------------------------------------------------------------ */
-  /* 3️⃣ Vote sessions                                                   */
+  /* 4️⃣ VOTE SESSIONS (ONLY ONE ACTIVE PER TYPE)                       */
   /* ------------------------------------------------------------------ */
 
-  const now = new Date()
+  const now = new Date();
 
-  const { data: sessions, error: sessionError } = await supabaseService
+  const { error: sessionError } = await supabaseService
     .from("vote_session")
     .insert([
       {
@@ -76,50 +132,41 @@ async function seed() {
         is_active: true,
         start_time: now.toISOString(),
         end_time: new Date(now.getTime() + 1000 * 60 * 60).toISOString(),
-        edition_id: editionId,
+        edition_id: edition.id,
       },
       {
         type: "zaal",
         is_active: false,
         start_time: now.toISOString(),
         end_time: new Date(now.getTime() + 1000 * 60 * 60).toISOString(),
-        edition_id: editionId,
+        edition_id: edition.id,
       },
-    ])
-    .select()
+    ]);
 
-  if (sessionError) throw sessionError
-  console.log("✅ vote sessions created")
-
-  const onlineSession = sessions.find(s => s.type === "online")
-  if (!onlineSession) throw new Error("Online session not found")
+  if (sessionError) throw sessionError;
+  console.log("✅ Vote sessions created");
 
   /* ------------------------------------------------------------------ */
-  /* 4️⃣ Votes                                                           */
+  /* 5️⃣ OPTIONAL TEST VOTES                                            */
   /* ------------------------------------------------------------------ */
 
-  const votes = []
+  const testVotes = films.slice(0, 5).map((film, i) => ({
+    film_id: film.id,
+    device_hash: randomDeviceHash(),
+    ip_address: `192.168.1.${i}`,
+    is_valid: true,
+    fraud_reason: null,
+  }));
 
-  for (let i = 0; i < 50; i++) {
-    const randomFilm = films[Math.floor(Math.random() * films.length)]
+  await supabaseService.from("vote").insert(testVotes);
 
-    votes.push({
-      film_id: randomFilm.id,
-      vote_session_id: onlineSession.id,
-      device_hash: randomDeviceHash(),
-      ip_address: `192.168.0.${i}`,
-      is_valid: true,
-    })
-  }
-
-  const { error: voteError } = await supabaseService.from("vote").insert(votes)
-  if (voteError) throw voteError
-
-  console.log(`✅ ${votes.length} votes created`)
-  console.log("🎉 Extended seeding complete!")
+  console.log("✅ Test votes created");
+  console.log("🎉 Seeding complete — database is clean and consistent");
 }
 
-seed().catch(err => {
-  console.error("❌ Seeding failed:", err)
-  process.exit(1)
-})
+/* ------------------------------------------------------------------ */
+
+seed().catch((err) => {
+  console.error("❌ Seeding failed:", err);
+  process.exit(1);
+});

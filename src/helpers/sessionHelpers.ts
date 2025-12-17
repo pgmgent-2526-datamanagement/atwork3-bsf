@@ -11,8 +11,11 @@ export async function getActiveSession(
     .select("*")
     .eq("type", source)
     .eq("is_active", true)
-    .maybeSingle();
+    .order("created_at", { ascending: false })
+    .limit(1);
 
   if (error) throw error;
-  return data;
+
+  // 👉 expliciet null als er geen is
+  return data?.[0] ?? null;
 }

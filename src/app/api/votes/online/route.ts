@@ -15,10 +15,13 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, vote });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
+  } catch (error) {
+    console.error("VOTE ONLINE ERROR:", error);
     return NextResponse.json(
-      { success: false, error: message },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : error,
+      },
       { status: 400 }
     );
   }

@@ -6,14 +6,16 @@ export async function checkDuplicateVote(
   sessionId: number,
   deviceHash: string
 ) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("vote")
     .select("id")
     .eq("vote_session_id", sessionId)
     .eq("device_hash", deviceHash)
-    .maybeSingle();
+    .limit(1); // ✅ BELANGRIJK
 
-  return !!data;
+  if (error) throw error;
+
+  return data.length > 0;
 }
 
 export async function insertVote(
