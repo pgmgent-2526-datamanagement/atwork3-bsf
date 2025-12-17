@@ -5,13 +5,11 @@ import { SuccessBackground } from "@/components/vote/SuccessBackground";
 import { Confetti } from "@/components/succes/ColoredBalls";
 import { SuccessIcon } from "@/components/succes/SuccesIcon";
 import { SuccessTitle } from "@/components/succes/SuccesTitle";
-import { FilmTag } from "@/components/film/FilmTag";
-import { FloatingIcons } from "@/components/film/FloatingIcons";
-
+import { FilmTag } from "@/app/api/film/FilmTag";
+import { FloatingIcons } from "@/app/api/film/FloatingIcons";
 
 interface SuccessPageProps {
   filmNumber: number | null;
- 
 }
 
 export function SuccessPage({ filmNumber }: SuccessPageProps) {
