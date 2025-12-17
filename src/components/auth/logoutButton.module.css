@@ -1,0 +1,31 @@
+.logoutButton {
+  display: flex;
+  align-items: center; /* items-center */
+  gap: 1rem; /* gap-4 = 16px */
+
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: inherit;
+
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.logoutButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.logoutButton:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.logoutButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
