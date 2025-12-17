@@ -57,14 +57,14 @@ export default function SignInPage() {
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
         <button type="submit" disabled={loading} className={styles.button}>
-          {loading ? "Signing in..." : "Sign In"}
+          {loading ? "Signing in..." : "Log In"}
         </button>
       </form>
 
       <p className={styles.redirect}>
         Don&apos;t have an account?{" "}
         <a href="/auth/sign-up" className={styles.link}>
-          Sign up
+         Register
         </a>
       </p>
     </div>
