@@ -1,40 +1,45 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
+import { authService } from "@/services/authService";
 
 export async function POST(req: Request) {
-  const supabase = await supabaseServer();
-  const { email, password } = await req.json();
+  try {
+    const supabase = await supabaseServer();
+    const { email, password } = await req.json();
 
-  // 1. Login
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email and password required" },
+        { status: 400 }
+      );
+    }
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 401 });
-  }
+    await authService.loginAdmin(supabase, email, password);
 
-  const userId = data.user.id;
+    return NextResponse.json({
+      success: true,
+      message: "Login successful",
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message === "INVALID_CREDENTIALS") {
+        return NextResponse.json(
+          { error: "Invalid credentials" },
+          { status: 401 }
+        );
+      }
 
-  // 2. Check admin_users
-  const { data: admin } = await supabase
-    .from("admin_users")
-    .select("*")
-    .eq("id", userId)
-    .single();
+      if (err.message === "FORBIDDEN") {
+        return NextResponse.json(
+          { error: "You are not an admin" },
+          { status: 403 }
+        );
+      }
+    }
 
-  if (!admin) {
-    await supabase.auth.signOut();
     return NextResponse.json(
-      { error: "You are not an admin" },
-      { status: 403 }
+      { error: "Login failed" },
+      { status: 500 }
     );
   }
-
-  return NextResponse.json({
-    success: true,
-    admin,
-    message: "Login successful",
-  });
 }

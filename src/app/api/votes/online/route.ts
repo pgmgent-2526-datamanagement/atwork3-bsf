@@ -3,10 +3,17 @@ import { supabaseServer } from "@/lib/supabaseServer";
 import { voteService } from "@/services/voteService";
 
 export async function POST(req: Request) {
-  const supabase = await supabaseServer();
-  const body = await req.json();
-
   try {
+    const supabase = await supabaseServer();
+    const body = await req.json();
+
+    if (!body?.filmId || !body?.deviceHash) {
+      return NextResponse.json(
+        { success: false, error: "filmId and deviceHash are required" },
+        { status: 400 }
+      );
+    }
+
     const vote = await voteService.castVote(supabase, {
       filmId: body.filmId,
       deviceHash: body.deviceHash,
@@ -15,14 +22,17 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, vote });
-  } catch (error) {
-    console.error("VOTE ONLINE ERROR:", error);
+  } catch (err) {
+    if (err instanceof Error) {
+      return NextResponse.json(
+        { success: false, error: err.message },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : error,
-      },
-      { status: 400 }
+      { success: false, error: "Unexpected server error" },
+      { status: 500 }
     );
   }
 }

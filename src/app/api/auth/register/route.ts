@@ -1,45 +1,42 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabaseServer";
+import { authService } from "@/services/authService";
 
 export async function POST(req: Request) {
-  const supabase = await supabaseServer();
-  const body = await req.json();
+  try {
+    const supabase = await supabaseServer();
+    const { email, password, first_name, last_name } = await req.json();
 
-  const { email, password, first_name, last_name } = body;
+    if (!email || !password || !first_name || !last_name) {
+      return NextResponse.json(
+        { error: "All fields required" },
+        { status: 400 }
+      );
+    }
 
-  // 1. Maak auth user
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+    await authService.registerAdmin(
+      supabase,
+      email,
+      password,
+      first_name,
+      last_name
+    );
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
-  }
+    return NextResponse.json({
+      success: true,
+      message: "Admin registered successfully",
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      return NextResponse.json(
+        { error: err.message },
+        { status: 400 }
+      );
+    }
 
-  const userId = data.user?.id;
-
-  if (!userId) {
     return NextResponse.json(
-      { error: "User was not created" },
-      { status: 400 }
+      { error: "Registration failed" },
+      { status: 500 }
     );
   }
-
-  // 2. Voeg admin record toe in public.admin_users
-  const { error: insertError } = await supabase.from("admin_users").insert({
-    id: userId,
-    first_name,
-    last_name,
-    role: "admin",
-  });
-
-  if (insertError) {
-    return NextResponse.json({ error: insertError.message }, { status: 400 });
-  }
-
-  return NextResponse.json({
-    success: true,
-    message: "User registered successfully",
-  });
 }

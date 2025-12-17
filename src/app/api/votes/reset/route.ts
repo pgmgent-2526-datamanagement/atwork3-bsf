@@ -1,18 +1,39 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { requireAdmin } from "@/lib/adminGuard";
 import { voteService } from "@/services/voteService";
 
 export async function POST() {
-  const supabase = await supabaseServer();
-
   try {
+    const { supabase } = await requireAdmin();
+
     const result = await voteService.resetVotes(supabase);
+
     return NextResponse.json(result);
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message === "UNAUTHORIZED") {
+        return NextResponse.json(
+          { success: false, error: "Not authenticated" },
+          { status: 401 }
+        );
+      }
+
+      if (err.message === "FORBIDDEN") {
+        return NextResponse.json(
+          { success: false, error: "Admin access required" },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(
+        { success: false, error: err.message },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { success: false, error: message },
-      { status: 400 }
+      { success: false, error: "Unexpected server error" },
+      { status: 500 }
     );
   }
 }

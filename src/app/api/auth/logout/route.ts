@@ -1,13 +1,17 @@
-import { supabaseServer } from "@/lib/supabaseServer";
 import { NextResponse } from "next/server";
+import { supabaseServer } from "@/lib/supabaseServer";
+import { authService } from "@/services/authService";
 
-export const logout = async () => {
-  const supabase = await supabaseServer();
-  const { error } = await supabase.auth.signOut();
+export async function POST() {
+  try {
+    const supabase = await supabaseServer();
+    await authService.logout(supabase);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json(
+      { error: "Logout failed" },
+      { status: 400 }
+    );
   }
-
-  return NextResponse.json({ success: true });
-};
+}

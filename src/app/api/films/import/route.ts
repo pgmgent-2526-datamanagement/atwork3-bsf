@@ -1,26 +1,25 @@
-// app/api/films/import/route.ts
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { requireAdmin } from "@/lib/adminGuard";
 import { parseFilmFile } from "@/helpers/parseFilmFile";
 import { filmService } from "@/services/filmService";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const form = await req.formData();
-  const file = form.get("file");
-
-  if (!(file instanceof File)) {
-    return NextResponse.json(
-      { success: false, error: "Upload een bestand via 'file' veld." },
-      { status: 400 }
-    );
-  }
-
   try {
-    const supabase = await supabaseServer();
-    const films = await parseFilmFile(file);
+    const { supabase } = await requireAdmin();
 
+    const form = await req.formData();
+    const file = form.get("file");
+
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        { success: false, error: "Upload een bestand via 'file' veld." },
+        { status: 400 }
+      );
+    }
+
+    const films = await parseFilmFile(file);
     const inserted = await filmService.importFilmsForActiveEdition(
       supabase,
       films
@@ -31,11 +30,31 @@ export async function POST(req: Request) {
       count: inserted.length,
       films: inserted,
     });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message === "UNAUTHORIZED") {
+        return NextResponse.json(
+          { success: false, error: "Not authenticated" },
+          { status: 401 }
+        );
+      }
+
+      if (err.message === "FORBIDDEN") {
+        return NextResponse.json(
+          { success: false, error: "Admin access required" },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(
+        { success: false, error: err.message },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { success: false, error: message },
-      { status: 400 }
+      { success: false, error: "Unexpected server error" },
+      { status: 500 }
     );
   }
 }

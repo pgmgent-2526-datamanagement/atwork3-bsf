@@ -1,15 +1,14 @@
-// app/api/votes/export/route.ts
-import { supabaseServer } from "@/lib/supabaseServer";
+import { requireAdmin } from "@/lib/adminGuard";
 import { exportService } from "@/helpers/exportService";
 import { makeTxt, makeExcel } from "@/helpers/exportFile";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
-  const supabase = await supabaseServer();
-  const format = new URL(req.url).searchParams.get("format");
-
   try {
+    const { supabase } = await requireAdmin();
+    const format = new URL(req.url).searchParams.get("format");
+
     const rows = await exportService.getVoteExportRows(supabase);
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 
@@ -32,8 +31,31 @@ export async function GET(req: Request) {
         "Content-Disposition": `attachment; filename="results-${timestamp}.xlsx"`,
       },
     });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    return Response.json({ success: false, error: message }, { status: 400 });
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message === "UNAUTHORIZED") {
+        return Response.json(
+          { success: false, error: "Not authenticated" },
+          { status: 401 }
+        );
+      }
+
+      if (err.message === "FORBIDDEN") {
+        return Response.json(
+          { success: false, error: "Admin access required" },
+          { status: 403 }
+        );
+      }
+
+      return Response.json(
+        { success: false, error: err.message },
+        { status: 400 }
+      );
+    }
+
+    return Response.json(
+      { success: false, error: "Unexpected server error" },
+      { status: 500 }
+    );
   }
 }
