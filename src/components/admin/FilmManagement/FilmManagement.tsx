@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "./FilmManagement.module.css";
 import { Button } from "@/components/ui/Button";
+import { Pencil, Trash } from "lucide-react";
 
 export function FilmManagement() {
   const [films] = useState([
@@ -33,13 +34,23 @@ export function FilmManagement() {
 
       <div className={styles.list}>
         {films.map((film, i) => (
-          <div key={i} className={styles.card}>
-            <h3>{film.title}</h3>
-            <span className={styles.meta}>
-              {film.director} • {film.year}
-            </span>
-            <p className={styles.votes}>{film.votes} stemmen totaal</p>
-          </div>
+          <article key={i} className={styles.card}>
+            <div>
+              <h3>{film.title}</h3>
+              <span className={styles.meta}>
+                {film.director} • {film.year}
+              </span>
+              <p className={styles.votes}>{film.votes} stemmen totaal</p>
+            </div>
+            <div className={styles.actions}>
+              <button className={styles.editButton}>
+                <Pencil size={16} />
+              </button>
+              <button className={styles.deleteButton}>
+                <Trash size={16} />
+              </button>
+            </div>
+          </article>
         ))}
       </div>
     </div>
