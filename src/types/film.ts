@@ -18,7 +18,9 @@ export interface UpdateFilmInput {
   title?: string;
   maker?: string | null;
   tagline?: string | null;
+  edition_id?: number | null;
   thumbnail_url?: string | null;
+  image_url?: string | null;
   image_text?: string | null;
   number?: number;
 }

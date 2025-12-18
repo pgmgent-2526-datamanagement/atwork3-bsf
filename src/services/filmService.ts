@@ -38,19 +38,53 @@ export const filmService = {
 
   // UPDATE FILM
 
-  async updateFilm(supabase: DB, input: UpdateFilmInput): Promise<FilmRow> {
-    const { id, ...updates } = input;
+async updateFilm(
+  supabase: DB,
+  input: UpdateFilmInput
+): Promise<FilmRow> {
+  const {
+    id,
+    edition_id,
+    number,
+    title,
+    tagline,
+    maker,
+    thumbnail_url,
+    image_url,
+  } = input;
 
-    const { data, error } = await supabase
-      .from("film")
-      .update(updates)
-      .eq("id", id)
-      .select()
-      .single();
+  if (!id) {
+    throw new Error("Film id is required");
+  }
 
-    if (error) throw error;
-    return data;
-  },
+  const updates = {
+    ...(edition_id !== undefined && { edition_id }),
+    ...(number !== undefined && { number }),
+    ...(title !== undefined && { title }),
+    ...(tagline !== undefined && { tagline }),
+    ...(maker !== undefined && { maker }),
+    ...(thumbnail_url !== undefined && { thumbnail_url }),
+    ...(image_url !== undefined && { image_url }),
+  };
+
+  const { data, error } = await supabase
+    .from("film")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    console.error("updateFilm error:", error);
+    throw new Error(error.message);
+  }
+  if (!data) {
+    throw new Error("Film not found");
+  }
+
+  return data;
+}
+,
 
   // DELETE FILM
 
