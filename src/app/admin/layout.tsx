@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Film, Settings, BarChart3, Download } from "lucide-react";
+import { Film, Settings, BarChart3, Download, QrCode  } from "lucide-react";
 import styles from "./Dashboard.module.css";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
@@ -36,6 +36,10 @@ export default function AdminLayout({
 
         <Link href="/admin/results" className={styles.navButton}>
           <BarChart3 size={18} /> Resultaten
+        </Link>
+        
+        <Link href="/admin/qr" className={styles.navButton}>
+           <QrCode size={18}  /> Qr-code
         </Link>
 
         <Link href="/admin/export" className={styles.navButton}>
