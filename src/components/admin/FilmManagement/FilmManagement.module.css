@@ -22,11 +22,22 @@
 }
 
 .card {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
   background: #fff;
   border-radius: 12px;
   padding: 16px;
   border: 1px solid #ebebeb;
 }
+
+.actions {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+  gap: 15px;
+}
+
 
 .meta {
   color: #777;
@@ -37,4 +48,53 @@
   margin-top: 6px;
   font-size: 14px;
   color: #333;
+}
+
+.editButton,
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* EDIT */
+.editButton {
+  color: #2563eb; /* blauw */
+}
+
+.editButton:hover {
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+/* DELETE */
+.deleteButton {
+  color: #dc2626; /* rood */
+}
+
+.deleteButton:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+/* Focus (toegankelijkheid) */
+.editButton:focus-visible,
+.deleteButton:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Disabled (optioneel) */
+.editButton:disabled,
+.deleteButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
