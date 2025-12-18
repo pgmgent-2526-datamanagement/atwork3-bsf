@@ -13,17 +13,7 @@ export async function requireAdmin() {
       cookies: {
         getAll() {
           return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach((c) => {
-              cookieStore.set(c.name, c.value, c.options);
-            });
-          } catch {
-            // ⚠️ In sommige contexts (bijv. Server Components)
-            // mag je geen cookies zetten → safe to ignore
-          }
-        },
+        }
       },
     }
   );
