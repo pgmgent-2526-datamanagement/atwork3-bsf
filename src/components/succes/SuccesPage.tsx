@@ -1,4 +1,3 @@
-// components/SuccessPage/SuccessPage.tsx
 import styles from "@/components/succes/SuccessPage.module.css";
 
 import { SuccessBackground } from "@/components/vote/SuccessBackground";
@@ -7,12 +6,13 @@ import { SuccessIcon } from "@/components/succes/SuccesIcon";
 import { SuccessTitle } from "@/components/succes/SuccesTitle";
 import { FilmTag } from "@/components/film/FilmTag";
 import { FloatingIcons } from "@/components/film/FloatingIcons";
+import type { FilmRow } from "@/types/film";
 
 interface SuccessPageProps {
-  filmNumber: number | null;
+  film: FilmRow | null;
 }
 
-export function SuccessPage({ filmNumber }: SuccessPageProps) {
+export function SuccessPage({ film }: SuccessPageProps) {
   return (
     <div className={styles["success-page"]}>
       <SuccessBackground />
@@ -21,7 +21,7 @@ export function SuccessPage({ filmNumber }: SuccessPageProps) {
       <div className={styles["success-page__content"]}>
         <SuccessIcon />
         <SuccessTitle />
-        {filmNumber && <FilmTag filmNumber={filmNumber} />}
+        {film && <FilmTag film={film} />}
         <FloatingIcons />
 
         <p className={styles["success-page__subtitle"]}>
