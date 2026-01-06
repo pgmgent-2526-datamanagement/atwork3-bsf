@@ -98,3 +98,88 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/*Modal */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+}
+
+.modal {
+  width: min(520px, 92vw);
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.modalClose {
+  background: transparent;
+  border: 0;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.input {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.error {
+  color: #b00020;
+  font-size: 14px;
+}
+
+
+/* .fileUpload {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px dashed #d0d5dd;
+  background: #fafafa;
+  color: #344054;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border 0.15s, background 0.15s;
+}
+
+.fileUpload:hover {
+  background: #f5f7fa;
+  border-color: #b8c0cc;
+  color: #000200;
+}
+
+.fileUpload input {
+  display: none;
+} */
