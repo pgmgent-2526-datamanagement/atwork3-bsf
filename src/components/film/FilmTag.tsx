@@ -1,13 +1,14 @@
-// components/ui/FilmTag.tsx
+// components/ui/FilmTag.tsx (or wherever you keep FilmTag)
 import { motion } from "framer-motion";
+import Image from "next/image";
 import styles from "@/components/succes/SuccessPage.module.css";
-
+import type { FilmRow } from "@/types/film";
 
 interface FilmTagProps {
-  filmNumber: number;
+  film: FilmRow;
 }
 
-export function FilmTag({ filmNumber }: FilmTagProps) {
+export function FilmTag({ film }: FilmTagProps) {
   return (
     <motion.div
       className={styles["success-page__film"]}
@@ -16,8 +17,21 @@ export function FilmTag({ filmNumber }: FilmTagProps) {
       transition={{ delay: 0.6 }}
     >
       <p className={styles["success-page__film-label"]}>Je hebt gestemd op</p>
+
+      {film.image_url && (
+        <div style={{ position: "relative", width: 120, height: 120, margin: "10px auto", borderRadius: 16, overflow: "hidden" }}>
+          <Image
+            src={film.image_url}
+            alt={film.title}
+            fill
+            sizes="120px"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+      )}
+
       <div className={styles["success-page__film-tag"]}>
-        <span>Film {filmNumber}</span>
+        <span>{film.title}</span>
       </div>
     </motion.div>
   );

@@ -1,6 +1,7 @@
 // components/ui/FilmCard.tsx
 import { motion } from "framer-motion";
 import { Film } from "lucide-react";
+import Image from "next/image";
 import styles from "@/app/vote/online/VotingPage.module.css";
 
 interface FilmCardProps {
@@ -8,9 +9,16 @@ interface FilmCardProps {
   title: string;
   delay: number;
   onClick: () => void;
+  imageUrl?: string | null; // FULL IMAGE
 }
 
-export function FilmCard({ number, title, delay, onClick }: FilmCardProps) {
+export function FilmCard({
+  number,
+  title,
+  delay,
+  onClick,
+  imageUrl,
+}: FilmCardProps) {
   return (
     <motion.button
       type="button"
@@ -26,7 +34,24 @@ export function FilmCard({ number, title, delay, onClick }: FilmCardProps) {
       </div>
 
       <div className={styles["voting-page__film-content"]}>
-        <Film className={styles["voting-page__film-icon"]} />
+        {imageUrl ? (
+          <div
+            className={styles["voting-page__film-icon"]}
+            style={{ position: "relative", overflow: "hidden", borderRadius: 8 }}
+          >
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              sizes="64px"
+              style={{ objectFit: "cover" }}
+              priority={false}
+            />
+          </div>
+        ) : (
+          <Film className={styles["voting-page__film-icon"]} />
+        )}
+
         <span className={styles["voting-page__film-title"]}>{title}</span>
       </div>
 

@@ -2,7 +2,11 @@
 import { FilmCard } from "./FilmCard";
 
 interface FilmListProps {
-  films: { number: number; title: string }[];
+  films: {
+    number: number;
+    title: string;
+    image_url?: string | null;
+  }[];
   onSelect: (number: number) => void;
 }
 
@@ -14,6 +18,7 @@ export function FilmList({ films, onSelect }: FilmListProps) {
           key={film.number}
           number={film.number}
           title={film.title}
+          imageUrl={film.image_url ?? null}
           delay={idx * 0.02}
           onClick={() => onSelect(film.number)}
         />
