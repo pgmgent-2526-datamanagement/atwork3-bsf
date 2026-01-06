@@ -7,94 +7,70 @@ import type {
   FilmRow,
   ImportFilmInput,
 } from "@/types/film";
+import { publicStorageUrl } from "@/helpers/storageUrl";
 
 type DB = SupabaseClient<Database>;
+type FilmDbRow = Database["public"]["Tables"]["film"]["Row"];
+
+const BUCKET = "film-images";
+
+function withImageUrl(supabase: DB, film: FilmDbRow): FilmRow {
+  return {
+    ...film,
+    image_url: publicStorageUrl(supabase, BUCKET, film.image_path),
+  };
+}
 
 export const filmService = {
   // GET ALL FILMS
-
   async getFilms(supabase: DB): Promise<FilmRow[]> {
     const { data, error } = await supabase
       .from("film")
       .select("*")
-      .order("number", { ascending: true });
+      .order("number", { ascending: true })
+      .returns<FilmDbRow[]>();
 
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []).map((film) => withImageUrl(supabase, film));
   },
 
   // CREATE FILM
-
   async createFilm(supabase: DB, input: CreateFilmInput): Promise<FilmRow> {
     const { data, error } = await supabase
       .from("film")
       .insert(input)
-      .select()
-      .single();
+      .select("*")
+      .single<FilmDbRow>();
 
     if (error) throw error;
-    return data;
+    return withImageUrl(supabase, data);
   },
 
   // UPDATE FILM
+  async updateFilm(supabase: DB, input: UpdateFilmInput): Promise<FilmRow> {
+    const { id, ...updates } = input;
+    if (!id) throw new Error("Film id is required");
 
-async updateFilm(
-  supabase: DB,
-  input: UpdateFilmInput
-): Promise<FilmRow> {
-  const {
-    id,
-    edition_id,
-    number,
-    title,
-    tagline,
-    maker,
-    thumbnail_url,
-    image_url,
-  } = input;
+    const { data, error } = await supabase
+      .from("film")
+      .update(updates)
+      .eq("id", id)
+      .select("*")
+      .maybeSingle<FilmDbRow>();
 
-  if (!id) {
-    throw new Error("Film id is required");
-  }
+    if (error) throw error;
+    if (!data) throw new Error("Film not found");
 
-  const updates = {
-    ...(edition_id !== undefined && { edition_id }),
-    ...(number !== undefined && { number }),
-    ...(title !== undefined && { title }),
-    ...(tagline !== undefined && { tagline }),
-    ...(maker !== undefined && { maker }),
-    ...(thumbnail_url !== undefined && { thumbnail_url }),
-    ...(image_url !== undefined && { image_url }),
-  };
-
-  const { data, error } = await supabase
-    .from("film")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .maybeSingle();
-
-  if (error) {
-    console.error("updateFilm error:", error);
-    throw new Error(error.message);
-  }
-  if (!data) {
-    throw new Error("Film not found");
-  }
-
-  return data;
-}
-,
+    return withImageUrl(supabase, data);
+  },
 
   // DELETE FILM
-
   async deleteFilm(supabase: DB, id: number): Promise<void> {
     const { error } = await supabase.from("film").delete().eq("id", id);
     if (error) throw error;
   },
 
   // IMPORT FILMS → ACTIVE EDITION
-
   async importFilmsForActiveEdition(
     supabase: DB,
     films: ImportFilmInput[]
@@ -103,38 +79,34 @@ async updateFilm(
       throw new Error("Geen films om te importeren.");
     }
 
-    // 1. Haal de actieve editie op
     const { data: edition, error: editionError } = await supabase
       .from("edition")
-      .select("id, year")
+      .select("id")
       .eq("is_active", true)
       .maybeSingle();
 
     if (editionError) throw editionError;
     if (!edition) {
-      throw new Error(
-        "Geen actieve editie gevonden om films in te importeren."
-      );
+      throw new Error("Geen actieve editie gevonden.");
     }
 
-    // 2. Map import data naar film rows
     const rowsToInsert = films.map((f) => ({
       number: f.number,
       title: f.title,
-      maker: f.maker,
-      image_text: f.image_text,
+      maker: f.maker ?? null,
       tagline: f.tagline ?? null,
-      thumbnail_url: f.thumbnail_url ?? null,
       edition_id: edition.id,
+      image_path: f.image_path ?? null,
     }));
 
-    // 3. Insert in bulk
     const { data, error } = await supabase
       .from("film")
       .insert(rowsToInsert)
-      .select();
+      .select("*")
+      .returns<FilmDbRow[]>();
 
     if (error) throw error;
-    return data ?? [];
+
+    return (data ?? []).map((film) => withImageUrl(supabase, film));
   },
 };

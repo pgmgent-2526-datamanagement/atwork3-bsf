@@ -94,10 +94,12 @@ export type Database = {
           created_at: string | null
           edition_id: number | null
           id: number
+          image_path: string | null
           image_url: string | null
           maker: string | null
           number: number
           tagline: string | null
+          thumbnail_path: string | null
           thumbnail_url: string | null
           title: string
         }
@@ -105,10 +107,12 @@ export type Database = {
           created_at?: string | null
           edition_id?: number | null
           id?: never
+          image_path?: string | null
           image_url?: string | null
           maker?: string | null
           number: number
           tagline?: string | null
+          thumbnail_path?: string | null
           thumbnail_url?: string | null
           title: string
         }
@@ -116,10 +120,12 @@ export type Database = {
           created_at?: string | null
           edition_id?: number | null
           id?: never
+          image_path?: string | null
           image_url?: string | null
           maker?: string | null
           number?: number
           tagline?: string | null
+          thumbnail_path?: string | null
           thumbnail_url?: string | null
           title?: string
         }
@@ -138,6 +144,7 @@ export type Database = {
           created_at: string | null
           device_hash: string
           film_id: number | null
+          fraud_reason: string | null
           id: number
           ip_address: string | null
           is_valid: boolean | null
@@ -147,6 +154,7 @@ export type Database = {
           created_at?: string | null
           device_hash: string
           film_id?: number | null
+          fraud_reason?: string | null
           id?: never
           ip_address?: string | null
           is_valid?: boolean | null
@@ -156,6 +164,7 @@ export type Database = {
           created_at?: string | null
           device_hash?: string
           film_id?: number | null
+          fraud_reason?: string | null
           id?: never
           ip_address?: string | null
           is_valid?: boolean | null
