@@ -1,22 +1,19 @@
-// components/ui/ConfirmVoteModal.tsx
+// components/vote/ConfirmVoteModal.tsx
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
+import Image from "next/image";
 import styles from "@/app/vote/zaal/VotingPage.module.css";
+import type { FilmRow } from "@/types/film";
 
 interface ConfirmVoteModalProps {
-  filmNumber: number | null;
+  film: FilmRow | null;
   open: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export function ConfirmVoteModal({
-  filmNumber,
-  open,
-  onConfirm,
-  onCancel,
-}: ConfirmVoteModalProps) {
-  if (filmNumber === null) return null;
+export function ConfirmVoteModal({ film, open, onConfirm, onCancel }: ConfirmVoteModalProps) {
+  if (!film) return null;
 
   return (
     <AnimatePresence>
@@ -49,11 +46,31 @@ export function ConfirmVoteModal({
                 </div>
               </motion.div>
 
-              <h3 className={styles["voting-page__modal-title"]}>
-                Bevestig je stem
-              </h3>
+              <h3 className={styles["voting-page__modal-title"]}>Bevestig je stem</h3>
+
+              {film.image_url && (
+                <div
+                  style={{
+                    position: "relative",
+                    width: 96,
+                    height: 96,
+                    margin: "8px auto",
+                    borderRadius: 12,
+                    overflow: "hidden",
+                  }}
+                >
+                  <Image
+                    src={film.image_url}
+                    alt={film.title}
+                    fill
+                    sizes="96px"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+              )}
+
               <p className={styles["voting-page__modal-text"]}>
-                Je stemt op Film {filmNumber}
+                Je stemt op <strong>{film.title}</strong>
               </p>
 
               <div className={styles["voting-page__modal-actions"]}>
