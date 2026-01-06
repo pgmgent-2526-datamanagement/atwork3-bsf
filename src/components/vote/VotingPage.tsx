@@ -1,31 +1,50 @@
 // components/VotingPage/VotingPage.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import styles from "@/app/vote/zaal/VotingPage.module.css";
 
-import { FilmList } from "@/components/film/FilmList";
+import { FilmList } from "@/components/film/FilmList"; 
 import { ConfirmVoteModal } from "@/components/vote/ConfirmVoteModal";
+
+import { supabase } from "@/lib/supabaseClient";
+import { filmService } from "@/services/filmService";
+import type { FilmRow } from "@/types/film";
 
 interface VotingPageProps {
   onVoteConfirmed: (filmNumber: number) => void;
 }
 
-const films = Array.from({ length: 10 }, (_, i) => ({
-  number: i + 1,
-  title: `Film ${i + 1}`,
-}));
-
 export function VotingPage({ onVoteConfirmed }: VotingPageProps) {
-  const [selectedFilm, setSelectedFilm] = useState<number | null>(null);
+  const [films, setFilms] = useState<FilmRow[]>([]);
+  const [selectedFilm, setSelectedFilm] = useState<FilmRow | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const data = await filmService.getFilms(supabase);
+        if (mounted) setFilms(data);
+      } catch (err) {
+        console.error("Failed to load films:", err);
+        if (mounted) setFilms([]);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const handleFilmSelect = (filmNumber: number) => {
-    setSelectedFilm(filmNumber);
+    const film = films.find((f) => f.number === filmNumber) ?? null;
+    setSelectedFilm(film);
     setModalOpen(true);
   };
 
   const handleConfirm = () => {
-    if (selectedFilm) onVoteConfirmed(selectedFilm);
+    if (selectedFilm) onVoteConfirmed(selectedFilm.number);
   };
 
   const handleCancel = () => {
@@ -48,7 +67,7 @@ export function VotingPage({ onVoteConfirmed }: VotingPageProps) {
       </div>
 
       <ConfirmVoteModal
-        filmNumber={selectedFilm}
+        film={selectedFilm}
         open={modalOpen}
         onCancel={handleCancel}
         onConfirm={handleConfirm}
