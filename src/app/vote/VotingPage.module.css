@@ -98,6 +98,7 @@
 }
 
 .voting-page__film-title {
+  font-family: "Forum", serif;
   margin: 0;
   color: #ffffff;
   font-size: 1rem;
@@ -122,6 +123,11 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.voting-page__film-meta,
+.voting-page__film-tagline {
+  font-family: "Forum", serif;
 }
 
 .voting-page__film-arrow {
@@ -206,6 +212,7 @@
 .voting-page__modal-button--primary {
   flex: 1;
   display: inline-flex;
+  font-family: "Forum", serif;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;

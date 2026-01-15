@@ -1,6 +1,6 @@
 // components/ui/FilmCard.tsx
 import { motion } from "framer-motion";
-import { Film } from "lucide-react";
+import { Film, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import styles from "@/app/vote/VotingPage.module.css";
 
@@ -53,7 +53,9 @@ export function FilmCard({
         <div className={styles["voting-page__film-titleRow"]}>
           <Film className={styles["voting-page__film-icon"]} />
           <h3 className={styles["voting-page__film-title"]}>{title}</h3>
-          <span className={styles["voting-page__film-arrow"]}>→</span>
+          <span className={styles["voting-page__film-arrow"]}>
+            <ArrowRight className={styles["voting-page__film-arrow-icon"]} />
+          </span>
         </div>
 
         {maker ? (
