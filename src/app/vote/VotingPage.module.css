@@ -1,5 +1,3 @@
-/* components/VotingPage/VotingPage.module.css */
-
 .voting-page {
   position: relative;
   min-height: 100vh;
@@ -40,21 +38,22 @@
 
 .voting-page__list {
   padding: 0 1rem 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
 .voting-page__film-card {
   width: 100%;
-  padding: 1.25rem;
+  padding: 0;
   border-radius: 1.25rem;
   border: 1px solid #374151;
-  background: linear-gradient(to right, #111827, #1f2933);
+  background: linear-gradient(to bottom, #111827, #0b1220);
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  overflow: hidden;
   cursor: pointer;
+  text-align: left;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -62,46 +61,71 @@
   border-color: #ec4899;
 }
 
-.voting-page__film-number {
-  flex-shrink: 0;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background-image: linear-gradient(to bottom right, #ec4899, #a855f7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.voting-page__film-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: #0b1020;
 }
 
-.voting-page__film-number span {
-  color: #ffffff;
-  font-weight: 600;
+.voting-page__film-imageFallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
 }
 
-.voting-page__film-content {
+.voting-page__film-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.voting-page__film-titleRow {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex: 1;
-  min-width: 0;
+  gap: 0.5rem;
 }
 
 .voting-page__film-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.1rem;
+  height: 1.1rem;
   color: #22d3ee;
   flex-shrink: 0;
 }
 
 .voting-page__film-title {
+  margin: 0;
   color: #ffffff;
   font-size: 1rem;
-  white-space: nowrap;
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.voting-page__film-meta {
+  margin: 0;
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.voting-page__film-tagline {
+  margin: 0;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .voting-page__film-arrow {
+  margin-left: auto;
   color: #9ca3af;
   font-size: 1.25rem;
 }
