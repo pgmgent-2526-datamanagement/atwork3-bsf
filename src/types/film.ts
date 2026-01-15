@@ -66,7 +66,6 @@ export interface ImportFilmInput {
 
 export interface VoteExportRow {
   filmId: number;
-  filmNumber: number | null;
   title: string;
   zaalCount: number;
   onlineCount: number;
