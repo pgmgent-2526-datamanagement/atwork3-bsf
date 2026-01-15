@@ -12,7 +12,7 @@ export type FilmRow = Tables<"film"> & {
 
 export interface CreateFilmInput {
   title: string;
-  number: number;
+  number?: number;
   maker?: string | null;
   tagline?: string | null;
   edition_id?: number | null;
@@ -23,6 +23,7 @@ export interface CreateFilmInput {
    */
   image_path?: string | null;
   thumbnail_path?: string | null;
+  
 
   /**
    * Legacy Option A fields (keep optional during transition)

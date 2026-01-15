@@ -48,7 +48,7 @@ export function FilmManagement() {
           data.append("maker", form.maker);
           data.append("image", form.image);
 
-      const res = await fetch("/api/films", {
+      const res = await fetch("/api/films/create", {
         method: "POST",
         credentials: "include", // handig bij auth/cookies
         body: data,
