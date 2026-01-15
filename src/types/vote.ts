@@ -34,3 +34,22 @@ export interface CombinedVoteResult {
 export interface FraudReason {
   reason: string;
 }
+
+/**
+ * ✅ Admin/API friendly results with titles + percentages
+ */
+export interface AdminSourceResult {
+  id: number;
+  title: string;
+  votes: number;
+  percentage: number;
+}
+
+export interface AdminCombinedResult {
+  id: number;
+  title: string;
+  votes: number;
+  votesEventHall: number; // zaal
+  votesHome: number; // online
+  percentage: number; // % of total (combined)
+}
