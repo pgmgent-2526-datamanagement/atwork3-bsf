@@ -3,11 +3,13 @@ import { FilmCard } from "./FilmCard";
 
 interface FilmListProps {
   films: {
-    number: number;
+    id: number;
     title: string;
     image_url?: string | null;
+    maker?: string | null;
+    tagline?: string | null;
   }[];
-  onSelect: (number: number) => void;
+  onSelect: (id: number) => void;
 }
 
 export function FilmList({ films, onSelect }: FilmListProps) {
@@ -15,12 +17,13 @@ export function FilmList({ films, onSelect }: FilmListProps) {
     <>
       {films.map((film, idx) => (
         <FilmCard
-          key={film.number}
-          number={film.number}
+          key={film.id}
           title={film.title}
           imageUrl={film.image_url ?? null}
+          maker={film.maker ?? null}
+          tagline={film.tagline ?? null}
           delay={idx * 0.02}
-          onClick={() => onSelect(film.number)}
+          onClick={() => onSelect(film.id)}
         />
       ))}
     </>
