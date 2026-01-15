@@ -24,7 +24,7 @@ export default function Page() {
 
     (async () => {
       try {
-        if (!filmId) {
+        if (filmId === null) {
           if (mounted) setFilm(null);
           return;
         }
