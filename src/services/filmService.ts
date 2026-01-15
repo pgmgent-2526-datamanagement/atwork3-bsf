@@ -27,8 +27,7 @@ export const filmService = {
     const { data, error } = await supabase
       .from("film")
       .select("*")
-      .order("number", { ascending: true })
-      .returns<FilmDbRow[]>();
+      .order("created_at", { ascending: false })
 
     if (error) throw error;
     return (data ?? []).map((film) => withImageUrl(supabase, film));
