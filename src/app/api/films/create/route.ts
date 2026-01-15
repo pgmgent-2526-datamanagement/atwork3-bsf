@@ -7,6 +7,7 @@ const BUCKET = "film-images";
 export async function POST(req: Request) {
   try {
     const { supabase } = await requireAdmin();
+    
 
     // ✅ multipart/form-data (voor file uploads)
     const formData = await req.formData();
