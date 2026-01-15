@@ -5,6 +5,8 @@
 // import { voteService } from "@/services/voteService";
 // import { filmService } from "@/services/filmService";
 
+import { NextResponse } from "next/server";
+
 // type DB = SupabaseClient<Database>;
 
 // export const exportService = {
@@ -28,3 +30,7 @@
 //     });
 //   },
 // };
+
+export function exportService() {
+  return NextResponse.json({ message: "This is an example response" });
+}
