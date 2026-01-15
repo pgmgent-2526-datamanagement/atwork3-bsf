@@ -97,7 +97,6 @@ export type Database = {
           image_path: string | null
           image_url: string | null
           maker: string | null
-          number: number
           tagline: string | null
           thumbnail_path: string | null
           thumbnail_url: string | null
@@ -110,7 +109,6 @@ export type Database = {
           image_path?: string | null
           image_url?: string | null
           maker?: string | null
-          number: number
           tagline?: string | null
           thumbnail_path?: string | null
           thumbnail_url?: string | null
@@ -123,7 +121,6 @@ export type Database = {
           image_path?: string | null
           image_url?: string | null
           maker?: string | null
-          number?: number
           tagline?: string | null
           thumbnail_path?: string | null
           thumbnail_url?: string | null
