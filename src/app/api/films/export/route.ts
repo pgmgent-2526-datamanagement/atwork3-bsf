@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/adminGuard";
 import { exportService } from "@/helpers/exportService";
-import { makeTxt, makeExcel } from "@/helpers/exportFile";
+import { makeTxt } from "@/helpers/exportFile";
 
 export const runtime = "nodejs";
 
@@ -23,14 +23,13 @@ export async function GET(req: Request) {
     }
 
     // default = excel
-    const buffer = makeExcel(rows);
-    return new Response(Buffer.from(buffer), {
-      headers: {
-        "Content-Type":
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename="results-${timestamp}.xlsx"`,
-      },
-    });
+    // return new Response(Buffer.from(buffer), {
+    //   headers: {
+    //     "Content-Type":
+    //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    //     "Content-Disposition": `attachment; filename="results-${timestamp}.xlsx"`,
+    //   },
+    // });
   } catch (err) {
     if (err instanceof Error) {
       if (err.message === "UNAUTHORIZED") {
