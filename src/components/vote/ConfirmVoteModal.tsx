@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X } from "lucide-react";
 import Image from "next/image";
-import styles from "@/app/vote/zaal/VotingPage.module.css";
+import styles from "@/app/vote/VotingPage.module.css";
 import type { FilmRow } from "@/types/film";
 
 interface ConfirmVoteModalProps {

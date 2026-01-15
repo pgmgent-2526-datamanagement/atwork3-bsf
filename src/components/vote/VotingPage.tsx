@@ -1,9 +1,9 @@
 // components/VotingPage/VotingPage.tsx
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import styles from "@/app/vote/zaal/VotingPage.module.css";
+import styles from "@/app/vote/VotingPage.module.css";
 
-import { FilmList } from "@/components/film/FilmList"; 
+import { FilmList } from "@/components/film/FilmList";
 import { ConfirmVoteModal } from "@/components/vote/ConfirmVoteModal";
 
 import { supabase } from "@/lib/supabaseClient";
@@ -11,7 +11,7 @@ import { filmService } from "@/services/filmService";
 import type { FilmRow } from "@/types/film";
 
 interface VotingPageProps {
-  onVoteConfirmed: (filmNumber: number) => void;
+  onVoteConfirmed: (filmId: number) => void;
 }
 
 export function VotingPage({ onVoteConfirmed }: VotingPageProps) {
@@ -37,18 +37,22 @@ export function VotingPage({ onVoteConfirmed }: VotingPageProps) {
     };
   }, []);
 
-  const handleFilmSelect = (filmNumber: number) => {
-    const film = films.find((f) => f.number === filmNumber) ?? null;
+  const handleFilmSelect = (id: number) => {
+    const film = films.find((f) => f.id === id) ?? null;
     setSelectedFilm(film);
     setModalOpen(true);
   };
 
   const handleConfirm = () => {
-    if (selectedFilm) onVoteConfirmed(selectedFilm.number);
+    if (!selectedFilm) return;
+    onVoteConfirmed(selectedFilm.id); // ✅ hier: id i.p.v. number
+    setModalOpen(false);
+    setSelectedFilm(null);
   };
 
   const handleCancel = () => {
     setModalOpen(false);
+    setSelectedFilm(null);
   };
 
   return (
