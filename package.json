@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "pull": "supabase db pull",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "supabase pull": "npx supabase gen types typescript --project-id vbyuyjpfayhuuqivpzlc > src/types/supabase.ts",
+    "db-pull": "npx supabase gen types typescript --project-id vbyuyjpfayhuuqivpzlc > src/types/supabase.ts",
     "seed": "ts-node -P tsconfig.seed.json src/scripts/seed.ts"
   },
   "dependencies": {
