@@ -44,3 +44,27 @@ export async function getActiveSession(
   if (error) throw error;
   return data ?? null;
 }
+
+/**
+ * Get latest vote session (active OR inactive) for a source AND active edition.
+ * Useful for admin results: you still want to see results after stopping a session.
+ */
+export async function getLatestSession(
+  supabase: DB,
+  source: VoteSource
+): Promise<Database["public"]["Tables"]["vote_session"]["Row"] | null> {
+  const editionId = await getActiveEditionId(supabase);
+  if (!editionId) return null;
+
+  const { data, error } = await supabase
+    .from("vote_session")
+    .select("*")
+    .eq("type", source)
+    .eq("edition_id", editionId)
+    .order("start_time", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ?? null;
+}
