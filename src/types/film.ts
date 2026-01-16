@@ -61,6 +61,7 @@ export interface ImportFilmInput {
   tagline?: string | null;
 
   image_path?: string | null;
+  image_text?: string | null; 
   thumbnail_path?: string | null;
 }
 
