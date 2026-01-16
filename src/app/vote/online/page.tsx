@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 export default function OnlinePage() {
   const router = useRouter();
 
-  function handleVoteConfirmed(filmId: number) {
-    router.push(`/vote/online/succes?film=${filmId}`);
-  }
+  const handleVoteConfirmed = (filmId: number) => {
+    router.push(`/vote/online/success?filmId=${filmId}`);
+  };
 
   return <VotingPage source="online" onVoteConfirmed={handleVoteConfirmed} />;
 }
