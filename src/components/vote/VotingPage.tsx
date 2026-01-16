@@ -1,4 +1,5 @@
-// components/VotingPage/VotingPage.tsx
+"use client";
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import styles from "@/app/vote/VotingPage.module.css";
@@ -10,14 +11,18 @@ import { supabase } from "@/lib/supabaseClient";
 import { filmService } from "@/services/filmService";
 import type { FilmRow } from "@/types/film";
 
+import { getOrCreateDeviceHash } from "@/helpers/voteHelperClient";
+
 interface VotingPageProps {
+  source: "zaal" | "online";
   onVoteConfirmed: (filmId: number) => void;
 }
 
-export function VotingPage({ onVoteConfirmed }: VotingPageProps) {
+export function VotingPage({ source, onVoteConfirmed }: VotingPageProps) {
   const [films, setFilms] = useState<FilmRow[]>([]);
   const [selectedFilm, setSelectedFilm] = useState<FilmRow | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -26,8 +31,7 @@ export function VotingPage({ onVoteConfirmed }: VotingPageProps) {
       try {
         const data = await filmService.getFilms(supabase);
         if (mounted) setFilms(data);
-      } catch (err) {
-        console.error("Failed to load films:", err);
+      } catch {
         if (mounted) setFilms([]);
       }
     })();
@@ -43,9 +47,40 @@ export function VotingPage({ onVoteConfirmed }: VotingPageProps) {
     setModalOpen(true);
   };
 
+  async function submitVote(filmId: number) {
+    if (busy) return;
+    setBusy(true);
+
+    try {
+      const deviceHash = await getOrCreateDeviceHash();
+
+      const res = await fetch(`/api/votes/${source}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filmId, deviceHash }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        alert(json?.error ?? "Stemmen mislukt");
+        return;
+      }
+
+      if (json.vote?.is_valid === false) {
+        alert(`Stem geweigerd: ${json.vote?.fraud_reason ?? "invalid"}`);
+        return;
+      }
+
+      onVoteConfirmed(filmId);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const handleConfirm = () => {
     if (!selectedFilm) return;
-    onVoteConfirmed(selectedFilm.id); // ✅ hier: id i.p.v. number
+    submitVote(selectedFilm.id);
     setModalOpen(false);
     setSelectedFilm(null);
   };
