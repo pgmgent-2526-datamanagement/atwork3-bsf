@@ -100,13 +100,14 @@
 .voting-page__film-title {
   font-family: "Forum", serif;
   margin: 0;
+  min-width: 0;
   color: #ffffff;
   font-size: 1rem;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
+  flex: 1 1 auto;
 }
 
 .voting-page__film-meta {
@@ -134,6 +135,9 @@
   margin-left: auto;
   color: #9ca3af;
   font-size: 1.25rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Modal */
@@ -237,4 +241,14 @@
 .voting-page__modal-button-icon {
   width: 1.25rem;
   height: 1.25rem;
+}
+@media (max-width: 480px) {
+  .voting-page__film-title {
+    white-space: normal;
+    display: -webkit-box;
+    line-clamp: 2;  
+    -webkit-line-clamp: 2;     /* 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
