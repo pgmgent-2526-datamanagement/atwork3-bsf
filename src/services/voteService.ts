@@ -10,7 +10,11 @@ import type {
 } from "@/types/vote";
 
 import { checkRateLimit } from "@/lib/rateLimit";
-import { getActiveSession, getActiveEditionId } from "@/helpers/sessionHelpers";
+import {
+  getActiveEditionId,
+  getActiveSession,
+  getLatestSession,
+} from "@/helpers/sessionHelpers";
 import { checkDuplicateVote, insertVote } from "@/helpers/voteHelpers";
 
 type DB = SupabaseClient<Database>;
@@ -31,17 +35,21 @@ const emptyResult = <T>(): QueryResult<T> => ({ data: [], error: null });
 
 // --- service ---
 export const voteService = {
-  // CAST VOTE
+  /**
+   * CAST VOTE
+   * - only allowed in ACTIVE session for that source + active edition
+   * - writes vote with is_valid=true/false depending on checks
+   */
   async castVote(supabase: DB, params: CastVoteParams) {
     const { filmId, deviceHash, ipAddress, source } = params;
 
-    // 1. Session check (edition-scoped in helper)
+    // 1) Session check (edition-scoped in helper)
     const session = await getActiveSession(supabase, source);
     if (!session) {
       throw new Error("Geen actieve stemronde.");
     }
 
-    // 2. Device blocklist / rate limit check
+    // 2) Rate limit / device block
     const rate = await checkRateLimit(supabase, deviceHash);
     if (!rate.allowed) {
       return insertVote(
@@ -55,7 +63,7 @@ export const voteService = {
       );
     }
 
-    // 3. Duplicate vote check
+    // 3) Duplicate vote check (per session + device)
     const alreadyVoted = await checkDuplicateVote(
       supabase,
       session.id,
@@ -74,7 +82,7 @@ export const voteService = {
       );
     }
 
-    // 4. Insert valid vote
+    // 4) Insert valid vote
     return insertVote(
       supabase,
       session.id,
@@ -88,7 +96,7 @@ export const voteService = {
   /**
    * RESULTS FOR ONE SOURCE (ADMIN)
    * - scoped to active edition
-   * - based on active session for that source
+   * - based on LATEST session for that source (active OR inactive)
    * - returns titles + percentages
    */
   async getResultsForSource(
@@ -98,7 +106,8 @@ export const voteService = {
     const editionId = await getActiveEditionId(supabase);
     if (!editionId) return [];
 
-    const session = await getActiveSession(supabase, source);
+    // ✅ FIX 4: latest session, not only active
+    const session = await getLatestSession(supabase, source);
     if (!session) return [];
 
     // Films for active edition
@@ -144,7 +153,7 @@ export const voteService = {
   /**
    * COMBINED RESULTS (ADMIN)
    * - scoped to active edition
-   * - sums votes from active zaal session + active online session
+   * - sums votes from LATEST zaal session + LATEST online session
    * - returns titles + split + total + combined percentage
    */
   async getCombinedResults(supabase: DB): Promise<AdminCombinedResult[]> {
@@ -160,10 +169,10 @@ export const voteService = {
 
     if (filmErr) throw filmErr;
 
-    // Active sessions (edition-scoped in helper)
+    // ✅ FIX 4: latest sessions, not only active
     const [zaalSession, onlineSession] = await Promise.all([
-      getActiveSession(supabase, "zaal"),
-      getActiveSession(supabase, "online"),
+      getLatestSession(supabase, "zaal"),
+      getLatestSession(supabase, "online"),
     ]);
 
     const zaalSessionId = zaalSession?.id ?? null;
@@ -229,43 +238,56 @@ export const voteService = {
       .sort((a, b) => b.votes - a.votes);
   },
 
-  // RESET VOTES + DEACTIVATE SESSIONS
+  /**
+   * RESET VOTES (ADMIN)
+   * - active edition only
+   * - deletes votes for ALL sessions in that edition (active or inactive)
+   * - deactivates any active sessions in that edition
+   */
   async resetVotes(supabase: DB) {
-    // 1. Find all active sessions
-    const { data: sessions, error } = await supabase
-      .from("vote_session")
-      .select("id")
-      .eq("is_active", true);
-
-    if (error) throw error;
-
-    if (!sessions || sessions.length === 0) {
-      throw new Error("Geen actieve stemrondes om te resetten.");
+    const editionId = await getActiveEditionId(supabase);
+    if (!editionId) {
+      throw new Error("Geen actieve editie gevonden.");
     }
 
-    const sessionIds = sessions.map((s) => s.id);
+    // 1) Find all sessions for the active edition
+    const { data: sessions, error: sessionsErr } = await supabase
+      .from("vote_session")
+      .select("id,is_active,type")
+      .eq("edition_id", editionId);
 
-    // 2. Delete all votes for these sessions
-    const { error: delError } = await supabase
-      .from("vote")
-      .delete()
-      .in("vote_session_id", sessionIds);
+    if (sessionsErr) throw sessionsErr;
 
-    if (delError) throw delError;
+    const sessionIds = (sessions ?? []).map((s) => s.id);
 
-    // 3. Deactivate all active sessions
+    // 2) Delete votes for these sessions
+    let deletedVotes = 0;
+    if (sessionIds.length > 0) {
+      const { error: delError, count } = await supabase
+        .from("vote")
+        .delete({ count: "exact" })
+        .in("vote_session_id", sessionIds);
+
+      if (delError) throw delError;
+      deletedVotes = count ?? 0;
+    }
+
+    // 3) Deactivate any active sessions for this edition
     const { error: deactivateError } = await supabase
       .from("vote_session")
       .update({ is_active: false })
+      .eq("edition_id", editionId)
       .eq("is_active", true);
 
     if (deactivateError) throw deactivateError;
 
     return {
       success: true,
+      editionId,
       resetSessions: sessionIds.length,
-      sessionIds,
-      message: "Stemmen gereset en sessies gedeactiveerd.",
+      deletedVotes,
+      message:
+        "Stemmen gereset voor de actieve editie en sessies gedeactiveerd.",
     };
   },
 };
