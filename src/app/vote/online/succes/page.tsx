@@ -10,7 +10,7 @@ import type { FilmRow } from "@/types/film";
 
 export default function Page() {
   const params = useSearchParams();
-  const filmParam = params.get("film");
+  const filmParam = params.get("filmId");
 
   const filmId = useMemo(() => {
     const n = filmParam ? Number(filmParam) : NaN;
@@ -39,7 +39,10 @@ export default function Page() {
         console.error("Failed to load film for success page:", err);
         if (mounted) setFilm(null);
       }
+
     })();
+
+    
 
     return () => {
       mounted = false;

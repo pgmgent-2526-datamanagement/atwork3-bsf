@@ -27,10 +27,24 @@ export const filmService = {
     const { data, error } = await supabase
       .from("film")
       .select("*")
-      .order("created_at", { ascending: false })
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return (data ?? []).map((film) => withImageUrl(supabase, film));
+  },
+  // GET FILM BY ID
+  async getFilmById(supabase: DB, id: number): Promise<FilmRow | null> {
+    const { data, error } = await supabase
+      .from("film")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      // als niet gevonden: return null (PGRST116 komt vaak voor bij single)
+      return null;
+    }
+    return withImageUrl(supabase, data);
   },
 
   // CREATE FILM
