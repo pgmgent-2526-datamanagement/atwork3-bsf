@@ -9,7 +9,7 @@ export function LogoutButton() {
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/auth/login");
+    router.push("/login");
   }
 
     return (

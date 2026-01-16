@@ -106,7 +106,7 @@ export default function SignUpPage() {
 
       <p className={styles.redirect}>
         Already have an account?{" "}
-        <a href="/auth/sign-in" className={styles.link}>
+        <a href="/login" className={styles.link}>
           Sign in
         </a>
       </p>

@@ -45,6 +45,10 @@ export default function AdminLayout({
         <Link href="/admin/export" className={styles.navButton}>
           <Download size={18} /> Export
         </Link>
+
+        <Link href="/admin/edition" className={styles.navButton}>
+          <Download size={18} /> Reset
+        </Link>
       </nav>
 
       {/* Page content */}

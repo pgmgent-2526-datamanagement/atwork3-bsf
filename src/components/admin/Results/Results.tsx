@@ -1,95 +1,98 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, Users, Trophy, Building2, Home } from "lucide-react";
 import styles from "./Results.module.css";
 
 interface FilmResult {
-  id: string;
+  id: number;
   title: string;
   votes: number;
-  votesEventHall: number;
-  votesHome: number;
+  votesEventHall: number; // zaal
+  votesHome: number; // online
   percentage: number;
 }
+
+type CombinedApiResponse =
+  | { success: true; results: FilmResult[] }
+  | { success: false; error: string };
 
 export default function Results() {
   const [activeTab, setActiveTab] = useState<"all" | "eventhall" | "home">(
     "all"
   );
+  const [results, setResults] = useState<FilmResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [results, setResults] = useState<FilmResult[]>([
-    {
-      id: "1",
-      title: "The Shawshank Redemption",
-      votes: 45,
-      votesEventHall: 28,
-      votesHome: 17,
-      percentage: 39.1,
-    },
-    {
-      id: "2",
-      title: "The Godfather",
-      votes: 38,
-      votesEventHall: 21,
-      votesHome: 17,
-      percentage: 33.0,
-    },
-    {
-      id: "3",
-      title: "Pulp Fiction",
-      votes: 32,
-      votesEventHall: 18,
-      votesHome: 14,
-      percentage: 27.8,
-    },
-  ]);
-
-  // LIVE updates simulatie
   useEffect(() => {
-    const interval = setInterval(() => {
-      setResults((prev) => {
-        const updated = prev.map((film) => {
-          const randomChangeEventHall = Math.random() > 0.6 ? 1 : 0;
-          const randomChangeHome = Math.random() > 0.6 ? 1 : 0;
+    let alive = true;
 
-          const newEvent = film.votesEventHall + randomChangeEventHall;
-          const newHome = film.votesHome + randomChangeHome;
+    const load = async () => {
+      try {
+        setError(null);
 
-          return {
-            ...film,
-            votesEventHall: newEvent,
-            votesHome: newHome,
-            votes: newEvent + newHome,
-          };
+        const res = await fetch("/api/votes/results/combined", {
+          cache: "no-store",
         });
+        const json = (await res.json()) as CombinedApiResponse;
 
-        const totalVotes = updated.reduce((s, f) => s + f.votes, 0);
+        if (!res.ok || !json.success) {
+          const msg = !json.success ? json.error : "Failed to load results";
+          throw new Error(msg);
+        }
 
-        return updated.map((film) => ({
-          ...film,
-          percentage:
-            totalVotes > 0 ? (film.votes / totalVotes) * 100 : film.percentage,
-        }));
-      });
-    }, 5000);
+        if (alive) setResults(json.results);
+      } catch (e) {
+        if (alive)
+          setError(e instanceof Error ? e.message : "Unexpected error");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    };
 
-    return () => clearInterval(interval);
+    load();
+    const interval = setInterval(load, 5000);
+
+    return () => {
+      alive = false;
+      clearInterval(interval);
+    };
   }, []);
 
   // Aggregates
-  const totalVotes = results.reduce((s, f) => s + f.votes, 0);
-  const totalEventHallVotes = results.reduce((s, f) => s + f.votesEventHall, 0);
-  const totalHomeVotes = results.reduce((s, f) => s + f.votesHome, 0);
-
-  const sortedTotal = [...results].sort((a, b) => b.votes - a.votes);
-  const sortedEventHall = [...results].sort(
-    (a, b) => b.votesEventHall - a.votesEventHall
+  const totalVotes = useMemo(
+    () => results.reduce((s, f) => s + f.votes, 0),
+    [results]
   );
-  const sortedHome = [...results].sort((a, b) => b.votesHome - a.votesHome);
+  const totalEventHallVotes = useMemo(
+    () => results.reduce((s, f) => s + f.votesEventHall, 0),
+    [results]
+  );
+  const totalHomeVotes = useMemo(
+    () => results.reduce((s, f) => s + f.votesHome, 0),
+    [results]
+  );
+
+  const sortedTotal = useMemo(
+    () => [...results].sort((a, b) => b.votes - a.votes),
+    [results]
+  );
+  const sortedEventHall = useMemo(
+    () => [...results].sort((a, b) => b.votesEventHall - a.votesEventHall),
+    [results]
+  );
+  const sortedHome = useMemo(
+    () => [...results].sort((a, b) => b.votesHome - a.votesHome),
+    [results]
+  );
 
   return (
     <div className={styles.container}>
+      {/* Minimal status */}
+      {loading && <div className={styles.card}>Resultaten laden…</div>}
+      {error && <div className={styles.card}>Error: {error}</div>}
+
       {/* STATS CARDS */}
       <div className={styles.statsGrid}>
         <div className={`${styles.card}`}>
@@ -100,9 +103,9 @@ export default function Results() {
           <div className={styles.statValue}>{totalVotes}</div>
           <p className={styles.statDescription}>
             <span className={styles.statTrend}>
-              <TrendingUp className={styles.trendIcon} /> +12%
+              <TrendingUp className={styles.trendIcon} /> live
             </span>{" "}
-            vs vorig uur
+            (auto refresh)
           </p>
         </div>
 
@@ -113,7 +116,10 @@ export default function Results() {
           </div>
           <div className={styles.statValue}>{totalEventHallVotes}</div>
           <p className={styles.statDescription}>
-            {((totalEventHallVotes / totalVotes) * 100).toFixed(1)}% van totaal
+            {totalVotes > 0
+              ? ((totalEventHallVotes / totalVotes) * 100).toFixed(1)
+              : "0.0"}
+            % van totaal
           </p>
         </div>
 
@@ -124,7 +130,10 @@ export default function Results() {
           </div>
           <div className={styles.statValue}>{totalHomeVotes}</div>
           <p className={styles.statDescription}>
-            {((totalHomeVotes / totalVotes) * 100).toFixed(1)}% van totaal
+            {totalVotes > 0
+              ? ((totalHomeVotes / totalVotes) * 100).toFixed(1)
+              : "0.0"}
+            % van totaal
           </p>
         </div>
 
@@ -134,11 +143,11 @@ export default function Results() {
             <Trophy className={styles.statIcon} />
           </div>
           <div className={styles.statValue}>
-            {sortedTotal[0]?.title.split(" ")[0] || "N/A"}
+            {sortedTotal[0]?.title?.split(" ")[0] || "N/A"}
           </div>
           <p className={styles.statDescription}>
             {sortedTotal[0]?.votes || 0} stemmen (
-            {sortedTotal[0]?.percentage.toFixed(1) || 0}%)
+            {(sortedTotal[0]?.percentage ?? 0).toFixed(1)}%)
           </p>
         </div>
       </div>
@@ -212,7 +221,7 @@ export default function Results() {
                           : styles.progressFillDefault
                       }`}
                       style={{ width: `${film.percentage}%` }}
-                    ></div>
+                    />
                   </div>
 
                   <div className={styles.rankingFooter}>
@@ -263,7 +272,7 @@ export default function Results() {
                         (film.votesEventHall / totalEventHallVotes) *
                         100
                       ).toFixed(1)
-                    : 0}
+                    : "0.0"}
                   %
                 </span>
               </div>
@@ -294,7 +303,7 @@ export default function Results() {
                 <span className={styles.listItemPercentage}>
                   {totalHomeVotes > 0
                     ? ((film.votesHome / totalHomeVotes) * 100).toFixed(1)
-                    : 0}
+                    : "0.0"}
                   %
                 </span>
               </div>

@@ -24,13 +24,15 @@ export default function Page() {
 
     (async () => {
       try {
-        if (!filmId) {
+        if (filmId === null) {
           if (mounted) setFilm(null);
           return;
         }
 
         // Only ~10 films, fetching all is fine and simple
-        const found = await filmService.getFilmById(supabase, filmId);
+        const films = await filmService.getFilms(supabase);
+        const found = films.find((f) => f.id === filmId) ?? null;
+        
 
         if (mounted) setFilm(found);
       } catch (err) {
