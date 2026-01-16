@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../Dashboard.module.css";
+import { useToast } from "@/components/ui/Toast";
 
 type EditionRow = {
   id: number;
@@ -29,26 +30,29 @@ type ResetResponse =
   | { success: false; error: string };
 
 export default function AdminEditionPage() {
+  const toast = useToast();
+
   const [edition, setEdition] = useState<EditionRow | null>(null);
   const [films, setFilms] = useState<FilmRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 2-step confirm: first click arms the reset for 6 seconds
+  const resetArmedUntilRef = useRef<number>(0);
+
   const filmCount = films.length;
 
   const load = async () => {
     setError(null);
 
-    // ✅ FIXED URL
-    const res = await fetch("/api/edition/current", {
-      cache: "no-store",
-    });
-
+    const res = await fetch("/api/edition/current", { cache: "no-store" });
     const json = (await res.json()) as CurrentEditionResponse;
 
     if (!res.ok || !json.success) {
-      setError(!json.success ? json.error : "Failed to load");
+      const msg = !json.success ? json.error : "Failed to load";
+      setError(msg);
+      toast.error(msg, "Kon editie niet laden");
       return;
     }
 
@@ -64,6 +68,7 @@ export default function AdminEditionPage() {
         setLoading(false);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const subtitle = useMemo(() => {
@@ -72,18 +77,28 @@ export default function AdminEditionPage() {
   }, [edition]);
 
   const onReset = async () => {
-    if (!edition) return;
+    if (!edition || busy) return;
 
-    const ok = window.confirm(
-      `⚠️ Dit verwijdert ALLE films, stem-sessies en stemmen van de actieve editie "${edition.name} (${edition.year})".\n\nDaarna wordt automatisch een nieuwe editie aangemaakt.\n\nDoorgaan?`
-    );
-    if (!ok) return;
+    const now = Date.now();
+    const armedUntil = resetArmedUntilRef.current;
+
+    // First click: arm reset
+    if (now > armedUntil) {
+      resetArmedUntilRef.current = now + 6000; // 6s window
+      toast.info(
+        `Klik binnen 6 seconden nogmaals op "Reset" om "${edition.name} (${edition.year})" te wissen.`,
+        "Bevestiging nodig"
+      );
+      return;
+    }
+
+    // Second click within window: execute
+    resetArmedUntilRef.current = 0;
 
     setBusy(true);
     setError(null);
 
     try {
-      // ✅ FIXED URL
       const res = await fetch("/api/edition/reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,13 +107,16 @@ export default function AdminEditionPage() {
       const json = (await res.json()) as ResetResponse;
 
       if (!res.ok || !json.success) {
-        throw new Error(!json.success ? json.error : "Reset failed");
+        const msg = !json.success ? json.error : "Reset failed";
+        throw new Error(msg);
       }
 
       await load();
-      alert(json.message);
+      toast.success(json.message, "Reset gelukt");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unexpected error");
+      const msg = e instanceof Error ? e.message : "Unexpected error";
+      setError(msg);
+      toast.error(msg, "Reset mislukt");
     } finally {
       setBusy(false);
     }

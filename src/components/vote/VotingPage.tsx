@@ -12,6 +12,7 @@ import { filmService } from "@/services/filmService";
 import type { FilmRow } from "@/types/film";
 
 import { getOrCreateDeviceHash } from "@/helpers/voteHelperClient";
+import { useToast } from "@/components/ui/Toast";
 
 interface VotingPageProps {
   source: "zaal" | "online";
@@ -19,6 +20,8 @@ interface VotingPageProps {
 }
 
 export function VotingPage({ source, onVoteConfirmed }: VotingPageProps) {
+  const toast = useToast();
+
   const [films, setFilms] = useState<FilmRow[]>([]);
   const [selectedFilm, setSelectedFilm] = useState<FilmRow | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -63,15 +66,38 @@ export function VotingPage({ source, onVoteConfirmed }: VotingPageProps) {
       const json = await res.json();
 
       if (!res.ok || !json.success) {
-        alert(json?.error ?? "Stemmen mislukt");
+        const msg: string = json?.error ?? "Stemmen mislukt";
+
+        if (msg.includes("Geen actieve stemronde")) {
+          toast.info(
+            "Er is momenteel geen actieve stemronde. Probeer straks opnieuw.",
+            "Stemming gesloten"
+          );
+          return;
+        }
+
+        toast.error(msg, "Stemmen mislukt");
         return;
       }
 
       if (json.vote?.is_valid === false) {
-        alert(`Stem geweigerd: ${json.vote?.fraud_reason ?? "invalid"}`);
+        const reason: string = json.vote?.fraud_reason ?? "INVALID";
+
+        if (reason === "DUPLICATE_VOTE") {
+          toast.info("Je hebt al gestemd in deze ronde.", "Al gestemd");
+          return;
+        }
+
+        if (reason === "DEVICE_BLOCKED") {
+          toast.error("Dit toestel mag momenteel niet stemmen.", "Geblokkeerd");
+          return;
+        }
+
+        toast.error("Je stem werd geweigerd.", "Stem geweigerd");
         return;
       }
 
+      toast.success("Je stem is opgeslagen!", "Gelukt");
       onVoteConfirmed(filmId);
     } finally {
       setBusy(false);
