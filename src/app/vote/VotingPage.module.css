@@ -92,6 +92,7 @@
 .voting-page__film-titleRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
 }
 
@@ -138,7 +139,7 @@
 
 .voting-page__film-arrow {
   flex: 0 0 auto;
-  margin-left: auto;
+  margin-left: 0;
   display: inline-flex;
   align-items: center;
 }
