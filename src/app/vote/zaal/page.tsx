@@ -3,12 +3,12 @@
 import { VotingPage } from "@/components/vote/VotingPage";
 import { useRouter } from "next/navigation";
 
-export default function Page() {
+export default function ZaalPage() {
   const router = useRouter();
 
-  const handleVoteConfirmed = (filmNumber: number) => {
-    router.push(`/vote/zaal/succes?film=${filmNumber}`);
-  };
+  function handleVoteConfirmed(filmId: number) {
+    router.push(`/vote/zaal/succes?film=${filmId}`);
+  }
 
-  return <VotingPage onVoteConfirmed={handleVoteConfirmed} />;
+  return <VotingPage source="zaal" onVoteConfirmed={handleVoteConfirmed} />;
 }
