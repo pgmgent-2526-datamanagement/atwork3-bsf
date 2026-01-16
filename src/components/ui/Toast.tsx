@@ -78,7 +78,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
       const toast: ToastItem = {
         id,
-        durationMs: t.durationMs ?? 3200,
+        durationMs: t.durationMs ?? 5200,
         ...t,
       };
 
@@ -113,7 +113,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         style={{
           position: "fixed",
           right: 16,
-          bottom: 16,
+          top: 16,
           zIndex: 9999,
           display: "grid",
           gap: 10,
