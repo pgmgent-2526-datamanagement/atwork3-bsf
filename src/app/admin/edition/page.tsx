@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import styles from "../Dashboard.module.css"; 
+import styles from "../Dashboard.module.css";
 
 type EditionRow = {
   id: number;
@@ -39,7 +39,12 @@ export default function AdminEditionPage() {
 
   const load = async () => {
     setError(null);
-    const res = await fetch("/api/admin/edition/current", { cache: "no-store" });
+
+    // ✅ FIXED URL
+    const res = await fetch("/api/edition/current", {
+      cache: "no-store",
+    });
+
     const json = (await res.json()) as CurrentEditionResponse;
 
     if (!res.ok || !json.success) {
@@ -78,7 +83,8 @@ export default function AdminEditionPage() {
     setError(null);
 
     try {
-      const res = await fetch("/api/admin/edition/reset", {
+      // ✅ FIXED URL
+      const res = await fetch("/api/edition/reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -89,7 +95,6 @@ export default function AdminEditionPage() {
         throw new Error(!json.success ? json.error : "Reset failed");
       }
 
-      // reload page data
       await load();
       alert(json.message);
     } catch (e) {
@@ -110,7 +115,9 @@ export default function AdminEditionPage() {
       {error && <div className={styles.card}>Error: {error}</div>}
 
       <div className={styles.card} style={{ marginBottom: 16 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+        <div
+          style={{ display: "flex", justifyContent: "space-between", gap: 12 }}
+        >
           <div>
             <div style={{ fontWeight: 600 }}>Actieve editie</div>
             <div style={{ opacity: 0.85 }}>
