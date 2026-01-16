@@ -217,25 +217,25 @@ export const voteService = {
     }
 
     const rows: AdminCombinedResult[] = (films ?? []).map((f) => {
-      const votesEventHall = zaalCounts.get(f.id) ?? 0;
-      const votesHome = onlineCounts.get(f.id) ?? 0;
-      const votes = votesEventHall + votesHome;
+      const zaalCount = zaalCounts.get(f.id) ?? 0;
+      const onlineCount = onlineCounts.get(f.id) ?? 0;
+      const total = zaalCount + onlineCount;
 
       return {
-        id: f.id,
+        filmId: f.id,
         title: f.title,
-        votes,
-        votesEventHall,
-        votesHome,
+        zaalCount,
+        onlineCount,
+        total,
         percentage: 0,
       };
     });
 
-    const total = rows.reduce((s, r) => s + r.votes, 0);
+    const grandTotal = rows.reduce((s, r) => s + r.total, 0);
 
     return rows
-      .map((r) => ({ ...r, percentage: pct(r.votes, total) }))
-      .sort((a, b) => b.votes - a.votes);
+      .map((r) => ({ ...r, percentage: pct(r.total, grandTotal) }))
+      .sort((a, b) => b.total - a.total);
   },
 
   /**
