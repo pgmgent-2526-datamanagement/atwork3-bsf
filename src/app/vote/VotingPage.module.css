@@ -112,7 +112,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1 1 0%;
+  flex: 1 1 auto;
 }
 
 .voting-page__film-meta {
@@ -137,10 +137,9 @@
 }
 
 .voting-page__film-arrow {
-  flex: 0 0 auto;
+  flex-shrink: 0; /* blijft altijd zichtbaar */
   margin-left: auto;
   display: inline-flex;
-  width: 100%;
 }
 
 /* Modal */
