@@ -35,21 +35,14 @@ const emptyResult = <T>(): QueryResult<T> => ({ data: [], error: null });
 
 // --- service ---
 export const voteService = {
-  /**
-   * CAST VOTE
-   * - only allowed in ACTIVE session for that source + active edition
-   * - writes vote with is_valid=true/false depending on checks
-   */
   async castVote(supabase: DB, params: CastVoteParams) {
     const { filmId, deviceHash, ipAddress, source } = params;
 
-    // 1) Session check (edition-scoped in helper)
     const session = await getActiveSession(supabase, source);
     if (!session) {
       throw new Error("Geen actieve stemronde.");
     }
 
-    // 2) Rate limit / device block
     const rate = await checkRateLimit(supabase, deviceHash);
     if (!rate.allowed) {
       return insertVote(
@@ -63,7 +56,6 @@ export const voteService = {
       );
     }
 
-    // 3) Duplicate vote check (per session + device)
     const alreadyVoted = await checkDuplicateVote(
       supabase,
       session.id,
@@ -82,7 +74,6 @@ export const voteService = {
       );
     }
 
-    // 4) Insert valid vote
     return insertVote(
       supabase,
       session.id,
@@ -93,12 +84,6 @@ export const voteService = {
     );
   },
 
-  /**
-   * RESULTS FOR ONE SOURCE (ADMIN)
-   * - scoped to active edition
-   * - based on LATEST session for that source (active OR inactive)
-   * - returns titles + percentages
-   */
   async getResultsForSource(
     supabase: DB,
     source: VoteSource
@@ -106,11 +91,9 @@ export const voteService = {
     const editionId = await getActiveEditionId(supabase);
     if (!editionId) return [];
 
-    // ✅ FIX 4: latest session, not only active
     const session = await getLatestSession(supabase, source);
     if (!session) return [];
 
-    // Films for active edition
     const { data: films, error: filmErr } = await supabase
       .from("film")
       .select("id,title")
@@ -119,7 +102,6 @@ export const voteService = {
 
     if (filmErr) throw filmErr;
 
-    // Valid votes for this session
     const { data: votes, error: voteErr } = await supabase
       .from("vote")
       .select("film_id")
@@ -128,7 +110,6 @@ export const voteService = {
 
     if (voteErr) throw voteErr;
 
-    // Count per film
     const counts = new Map<number, number>();
     for (const v of (votes ?? []) as VoteFilmRow[]) {
       const filmId = v.film_id;
@@ -152,15 +133,13 @@ export const voteService = {
 
   /**
    * COMBINED RESULTS (ADMIN)
-   * - scoped to active edition
-   * - sums votes from LATEST zaal session + LATEST online session
-   * - returns titles + split + total + combined percentage
+   * Returns the same field names your Results.tsx uses:
+   * { id, title, votes, votesEventHall, votesHome, percentage }
    */
   async getCombinedResults(supabase: DB): Promise<AdminCombinedResult[]> {
     const editionId = await getActiveEditionId(supabase);
     if (!editionId) return [];
 
-    // Films for active edition
     const { data: films, error: filmErr } = await supabase
       .from("film")
       .select("id,title")
@@ -169,7 +148,6 @@ export const voteService = {
 
     if (filmErr) throw filmErr;
 
-    // ✅ FIX 4: latest sessions, not only active
     const [zaalSession, onlineSession] = await Promise.all([
       getLatestSession(supabase, "zaal"),
       getLatestSession(supabase, "online"),
@@ -217,40 +195,33 @@ export const voteService = {
     }
 
     const rows: AdminCombinedResult[] = (films ?? []).map((f) => {
-      const zaalCount = zaalCounts.get(f.id) ?? 0;
-      const onlineCount = onlineCounts.get(f.id) ?? 0;
-      const total = zaalCount + onlineCount;
+      const votesEventHall = zaalCounts.get(f.id) ?? 0; // zaal -> eventhall
+      const votesHome = onlineCounts.get(f.id) ?? 0; // online -> home
+      const votes = votesEventHall + votesHome;
 
       return {
-        filmId: f.id,
+        id: f.id,
         title: f.title,
-        zaalCount,
-        onlineCount,
-        total,
+        votes,
+        votesEventHall,
+        votesHome,
         percentage: 0,
       };
     });
 
-    const grandTotal = rows.reduce((s, r) => s + r.total, 0);
+    const grandTotal = rows.reduce((s, r) => s + r.votes, 0);
 
     return rows
-      .map((r) => ({ ...r, percentage: pct(r.total, grandTotal) }))
-      .sort((a, b) => b.total - a.total);
+      .map((r) => ({ ...r, percentage: pct(r.votes, grandTotal) }))
+      .sort((a, b) => b.votes - a.votes);
   },
 
-  /**
-   * RESET VOTES (ADMIN)
-   * - active edition only
-   * - deletes votes for ALL sessions in that edition (active or inactive)
-   * - deactivates any active sessions in that edition
-   */
   async resetVotes(supabase: DB) {
     const editionId = await getActiveEditionId(supabase);
     if (!editionId) {
       throw new Error("Geen actieve editie gevonden.");
     }
 
-    // 1) Find all sessions for the active edition
     const { data: sessions, error: sessionsErr } = await supabase
       .from("vote_session")
       .select("id,is_active,type")
@@ -260,7 +231,6 @@ export const voteService = {
 
     const sessionIds = (sessions ?? []).map((s) => s.id);
 
-    // 2) Delete votes for these sessions
     let deletedVotes = 0;
     if (sessionIds.length > 0) {
       const { error: delError, count } = await supabase
@@ -272,7 +242,6 @@ export const voteService = {
       deletedVotes = count ?? 0;
     }
 
-    // 3) Deactivate any active sessions for this edition
     const { error: deactivateError } = await supabase
       .from("vote_session")
       .update({ is_active: false })

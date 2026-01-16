@@ -46,10 +46,12 @@ export interface AdminSourceResult {
 }
 
 export interface AdminCombinedResult {
-  filmId: number;
-  total: number;
-  zaalCount: number;
-  onlineCount: number;
+  id: number;
   title: string;
-  percentage: number; // % of total (combined)
+  votes: number;
+  votesEventHall: number;
+  votesHome: number;
+  percentage: number;
 }
+
+

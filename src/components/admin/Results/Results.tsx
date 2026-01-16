@@ -8,8 +8,8 @@ interface FilmResult {
   id: number;
   title: string;
   votes: number;
-  votesEventHall: number; // zaal
-  votesHome: number; // online
+  votesEventHall: number;
+  votesHome: number;
   percentage: number;
 }
 
@@ -60,7 +60,6 @@ export default function Results() {
     };
   }, []);
 
-  // Aggregates
   const totalVotes = useMemo(
     () => results.reduce((s, f) => s + f.votes, 0),
     [results]
@@ -87,15 +86,16 @@ export default function Results() {
     [results]
   );
 
+  const keyOf = (film: FilmResult, tab: string, index: number) =>
+    film.id != null ? `${film.id}-${tab}` : `${film.title}-${tab}-${index}`;
+
   return (
     <div className={styles.container}>
-      {/* Minimal status */}
       {loading && <div className={styles.card}>Resultaten laden…</div>}
       {error && <div className={styles.card}>Error: {error}</div>}
 
-      {/* STATS CARDS */}
       <div className={styles.statsGrid}>
-        <div className={`${styles.card}`}>
+        <div className={styles.card}>
           <div className={styles.statHeader}>
             <span>Totaal Stemmen</span>
             <Users className={styles.statIcon} />
@@ -152,7 +152,6 @@ export default function Results() {
         </div>
       </div>
 
-      {/* TABS */}
       <div className={styles.tabs}>
         <button
           onClick={() => setActiveTab("all")}
@@ -184,11 +183,10 @@ export default function Results() {
         </button>
       </div>
 
-      {/* TAB CONTENT */}
       {activeTab === "all" && (
         <div className={styles.rankingList}>
           {sortedTotal.map((film, index) => (
-            <div key={film.id} className={styles.rankingItem}>
+            <div key={keyOf(film, "all", index)} className={styles.rankingItem}>
               <div className={styles.rankingRow}>
                 <div
                   className={`${styles.rankBadge} ${
@@ -247,11 +245,13 @@ export default function Results() {
         </div>
       )}
 
-      {/* EVENT HALL ONLY */}
       {activeTab === "eventhall" && (
         <div className={styles.rankingList}>
           {sortedEventHall.map((film, index) => (
-            <div key={film.id} className={styles.listItem}>
+            <div
+              key={keyOf(film, "eventhall", index)}
+              className={styles.listItem}
+            >
               <div className={styles.listItemLeft}>
                 <div
                   className={`${styles.listItemBadge} ${styles.listItemBadgeBlue}`}
@@ -281,11 +281,10 @@ export default function Results() {
         </div>
       )}
 
-      {/* HOME ONLY */}
       {activeTab === "home" && (
         <div className={styles.rankingList}>
           {sortedHome.map((film, index) => (
-            <div key={film.id} className={styles.listItem}>
+            <div key={keyOf(film, "home", index)} className={styles.listItem}>
               <div className={styles.listItemLeft}>
                 <div
                   className={`${styles.listItemBadge} ${styles.listItemBadgePurple}`}
