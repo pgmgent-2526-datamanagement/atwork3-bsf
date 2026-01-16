@@ -64,8 +64,13 @@
 .voting-page__film-image {
   position: relative;
   width: 100%;
-  aspect-ratio: 3/4;
+  aspect-ratio: 2 / 3; /* klassiek poster formaat */
   background: #0b1020;
+}
+
+.voting-page__film-image img {
+  object-fit: cover;
+  object-position: top; /* focus op bovenkant (gezichten) */
 }
 
 .voting-page__film-imageFallback {
@@ -137,7 +142,6 @@
   font-size: 1.25rem;
   flex: 0 0 auto;
   display: inline-flex;
-  align-items: center;
 }
 
 /* Modal */
@@ -246,9 +250,13 @@
   .voting-page__film-title {
     white-space: normal;
     display: -webkit-box;
-    line-clamp: 2;  
-    -webkit-line-clamp: 2;     /* 2 lines */
+    line-clamp: 2;
+    -webkit-line-clamp: 2; /* 2 lines */
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+  .voting-page__film-image {
+    aspect-ratio: 3 / 4;
+    max-height: 420px;
   }
 }
