@@ -10,9 +10,9 @@ import type { FilmRow } from "@/types/film";
 
 export default function Page() {
   const params = useSearchParams();
-  const filmParam = params.get("film");
+  const filmParam = params.get("filmId");
 
-  const filmNumber = useMemo(() => {
+  const filmId = useMemo(() => {
     const n = filmParam ? Number(filmParam) : NaN;
     return Number.isFinite(n) ? n : null;
   }, [filmParam]);
@@ -24,26 +24,28 @@ export default function Page() {
 
     (async () => {
       try {
-        if (!filmNumber) {
+        if (!filmId) {
           if (mounted) setFilm(null);
           return;
         }
 
         // Only ~10 films, fetching all is fine and simple
-        const films = await filmService.getFilms(supabase);
-        const found = films.find((f) => f.number === filmNumber) ?? null;
+        const found = await filmService.getFilmById(supabase, filmId);
 
         if (mounted) setFilm(found);
       } catch (err) {
         console.error("Failed to load film for success page:", err);
         if (mounted) setFilm(null);
       }
+
     })();
+
+    
 
     return () => {
       mounted = false;
     };
-  }, [filmNumber]);
+  }, [filmId]);
 
   return <SuccessPage film={film} />;
 }
