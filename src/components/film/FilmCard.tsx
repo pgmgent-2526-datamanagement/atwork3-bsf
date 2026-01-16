@@ -51,10 +51,8 @@ export function FilmCard({
 
       <div className={styles["voting-page__film-body"]}>
         <div className={styles["voting-page__film-titleRow"]}>
-          <div>
           <Film className={styles["voting-page__film-icon"]} />
           <h3 className={styles["voting-page__film-title"]}>{title}</h3>
-          </div>
           <span className={styles["voting-page__film-arrow"]}>
             <ArrowRight className={styles["voting-page__film-arrow-icon"]} />
           </span>
