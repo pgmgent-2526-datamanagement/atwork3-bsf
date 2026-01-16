@@ -137,10 +137,8 @@
 }
 
 .voting-page__film-arrow {
+  flex-shrink: 0; /* blijft altijd zichtbaar */
   margin-left: auto;
-  color: #9ca3af;
-  font-size: 1.25rem;
-  flex: 0 0 auto;
   display: inline-flex;
 }
 
