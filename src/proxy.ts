@@ -9,7 +9,7 @@ export async function proxy(req: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   const { data: admin } = await supabase
@@ -21,7 +21,7 @@ export async function proxy(req: NextRequest) {
   if (!admin) {
     await supabase.auth.signOut();
     return NextResponse.redirect(
-      new URL("/auth/login?error=no-admin", req.url)
+      new URL("/login?error=no-admin", req.url)
     );
   }
 
