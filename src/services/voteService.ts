@@ -195,16 +195,17 @@ export const voteService = {
     }
 
     const rows: AdminCombinedResult[] = (films ?? []).map((f) => {
-      const votesEventHall = zaalCounts.get(f.id) ?? 0; // zaal -> eventhall
-      const votesHome = onlineCounts.get(f.id) ?? 0; // online -> home
-      const votes = votesEventHall + votesHome;
+      const zaalCount = zaalCounts.get(f.id) ?? 0; // zaal -> eventhall
+      const onlineCount = onlineCounts.get(f.id) ?? 0; // online -> home
+      const votes = zaalCount + onlineCount;
 
       return {
-        id: f.id,
+        filmId: f.id,
         title: f.title,
         votes,
-        votesEventHall,
-        votesHome,
+        zaalCount,
+        onlineCount,
+        total: votes,
         percentage: 0,
       };
     });
