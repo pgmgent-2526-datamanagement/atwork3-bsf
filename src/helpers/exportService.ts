@@ -20,7 +20,6 @@ export const exportService = {
       const f = filmMap.get(r.filmId);
       return {
         filmId: r.filmId,
-        filmNumber: f?.number ?? null,
         title: f?.title ?? "Onbekend",
         zaalCount: r.zaalCount,
         onlineCount: r.onlineCount,
