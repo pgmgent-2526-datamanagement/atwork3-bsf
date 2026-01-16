@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SuccessPage } from "@/components/succes/SuccesPage";
 
@@ -44,5 +44,9 @@ export default function Page() {
     };
   }, [filmId]);
 
-  return <SuccessPage film={film} />;
+      return (
+       <Suspense fallback={null}>
+         <SuccessPage film={film} />
+       </Suspense>
+     );
 }
