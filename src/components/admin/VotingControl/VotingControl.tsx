@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./VotingControl.module.css";
 import { Button } from "@/components/ui/Button";
 import { Home, Building2 } from "lucide-react";
@@ -9,41 +9,60 @@ type ActiveSession = {
   type: "zaal" | "online";
 };
 
-export default function VotingControl() {
-  const [active, setActive] = useState({
-    zaal: false,
-    online: false,
-  });
+const DURATION_SECONDS = 300;
 
-  /* ----------------------------- */
-  /* Fetch echte status uit backend */
-  /* ----------------------------- */
-  async function fetchStatus() {
-    const res = await fetch("/api/votes/status");
-    const data: ActiveSession[] = await res.json();
+export default function VotingControl() {
+  const [active, setActive] = useState({ zaal: false, online: false });
+
+  const fetchStatus = useCallback(async (signal?: AbortSignal) => {
+    const res = await fetch("/api/votes/status", {
+      cache: "no-store",
+      signal,
+    });
+
+    if (!res.ok) return;
+
+    const data = (await res.json()) as ActiveSession[];
+    if (!Array.isArray(data)) return;
 
     setActive({
       zaal: data.some((s) => s.type === "zaal"),
       online: data.some((s) => s.type === "online"),
     });
-  }
-
-  useEffect(() => {
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 1000); // live sync
-    return () => clearInterval(interval);
   }, []);
 
-  /* ----------------------------- */
-  /* Start / stop helpers          */
-  /* ----------------------------- */
+  useEffect(() => {
+    let mounted = true;
+    const controller = new AbortController();
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    (async () => {
+      try {
+        await fetchStatus(controller.signal);
+
+        if (!mounted) return;
+        interval = setInterval(() => {
+          fetchStatus().catch(() => {});
+        }, 1000);
+      } catch {
+        // ignore
+      }
+    })();
+
+    return () => {
+      mounted = false;
+      controller.abort();
+      if (interval) clearInterval(interval);
+    };
+  }, [fetchStatus]);
+
   async function start(source: "zaal" | "online") {
     await fetch("/api/votes/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ source }),
+      body: JSON.stringify({ source, durationSeconds: DURATION_SECONDS }), // ✅
     });
-    fetchStatus();
+    fetchStatus().catch(() => {});
   }
 
   async function stop(source: "zaal" | "online") {
@@ -52,7 +71,7 @@ export default function VotingControl() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ source }),
     });
-    fetchStatus();
+    fetchStatus().catch(() => {});
   }
 
   async function openAll() {
@@ -63,19 +82,20 @@ export default function VotingControl() {
     await Promise.all([stop("zaal"), stop("online")]);
   }
 
-  /* ----------------------------- */
-  /* Status berekening (UI only)   */
-  /* ----------------------------- */
   const allOpen = active.zaal && active.online;
   const allClosed = !active.zaal && !active.online;
   const partialOpen = !allOpen && !allClosed;
+
+  const durationLabel =
+    DURATION_SECONDS >= 60
+      ? `${Math.round(DURATION_SECONDS / 60)} minuten`
+      : `${DURATION_SECONDS} seconden`;
 
   return (
     <div className={styles.container}>
       <h2>Stemming Controle</h2>
       <p className={styles.subtext}>Beheer de stemming per locatie</p>
 
-      {/* Status box */}
       <div
         className={`${styles.statusBox} ${
           allOpen ? styles.open : allClosed ? styles.closed : styles.partial
@@ -87,7 +107,7 @@ export default function VotingControl() {
           {partialOpen && "Gedeeltelijk open"}
         </strong>
         <p>
-          {allOpen && "Iedereen kan stemmen (1 minuut)."}
+          {allOpen && `Iedereen kan stemmen (${durationLabel}).`}
           {allClosed && "Niemand kan momenteel stemmen."}
           {partialOpen && "Slechts één locatie is open."}
         </p>
@@ -106,7 +126,7 @@ export default function VotingControl() {
           <div>
             <p className={styles.controlTitle}>Event Hall</p>
             <p className={styles.controlDescription}>
-              {active.zaal ? "Open (1 minuut)" : "Gesloten"}
+              {active.zaal ? `Open (${durationLabel})` : "Gesloten"}
             </p>
           </div>
         </div>
@@ -115,9 +135,7 @@ export default function VotingControl() {
           <input
             type="checkbox"
             checked={active.zaal}
-            onChange={(e) =>
-              e.target.checked ? start("zaal") : stop("zaal")
-            }
+            onChange={(e) => (e.target.checked ? start("zaal") : stop("zaal"))}
           />
           <span className={styles.slider} />
         </label>
@@ -136,7 +154,7 @@ export default function VotingControl() {
           <div>
             <p className={styles.controlTitle}>Online</p>
             <p className={styles.controlDescription}>
-              {active.online ? "Open (1 minuut)" : "Gesloten"}
+              {active.online ? `Open (${durationLabel})` : "Gesloten"}
             </p>
           </div>
         </div>
@@ -153,15 +171,10 @@ export default function VotingControl() {
         </label>
       </div>
 
-      {/* Alles open / sluiten */}
       <div className={styles.actionButtons}>
         {!allOpen && <Button onClick={openAll}>Alles Open</Button>}
-
         {!allClosed && (
-          <Button
-            onClick={closeAll}
-            style={{ background: "#dc2626" }}
-          >
+          <Button onClick={closeAll} style={{ background: "#dc2626" }}>
             Alles Sluiten
           </Button>
         )}
