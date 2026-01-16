@@ -3,12 +3,12 @@
 import { VotingPage } from "@/components/vote/VotingPage";
 import { useRouter } from "next/navigation";
 
-export default function Page() {
+export default function OnlinePage() {
   const router = useRouter();
 
   const handleVoteConfirmed = (filmId: number) => {
     router.push(`/vote/online/success?filmId=${filmId}`);
   };
 
-  return <VotingPage onVoteConfirmed={handleVoteConfirmed} />;
+  return <VotingPage source="online" onVoteConfirmed={handleVoteConfirmed} />;
 }
