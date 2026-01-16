@@ -22,17 +22,17 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, vote });
-  } catch (err) {
-    if (err instanceof Error) {
-      return NextResponse.json(
-        { success: false, error: err.message },
-        { status: 400 }
-      );
-    }
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : "Unexpected server error";
 
     return NextResponse.json(
-      { success: false, error: "Unexpected server error" },
-      { status: 500 }
+      { success: false, error: message },
+      { status: 400 }
     );
   }
 }
