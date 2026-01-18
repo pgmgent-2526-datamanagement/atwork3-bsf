@@ -1,16 +1,5 @@
-"use client";
-
-import { HomePage } from "@/components/home/HomePage";
-import { useRouter } from "next/navigation";
+import HomeClient from "./HomeClient";
 
 export default function Page() {
-  const router = useRouter();
-
-  const handleStartVoting = () => {
-    router.push("/vote/zaal");
-  };
-
-  return <HomePage onStartVoting={handleStartVoting} />;
+  return <HomeClient />;
 }
-
-

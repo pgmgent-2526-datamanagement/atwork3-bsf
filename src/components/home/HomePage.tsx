@@ -1,3 +1,5 @@
+"use client";
+
 // components/HomePage/HomePage.tsx
 import { motion } from "framer-motion";
 import styles from "@/app/(public)/HomePage.module.css";

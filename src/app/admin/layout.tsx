@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Film, Settings, BarChart3, Download, QrCode  } from "lucide-react";
 import styles from "./Dashboard.module.css";
