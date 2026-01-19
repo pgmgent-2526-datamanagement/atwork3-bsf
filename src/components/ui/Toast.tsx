@@ -12,12 +12,18 @@ import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
 
 export type ToastVariant = "success" | "error" | "info";
 
+export type ToastAction = {
+  label: string;
+  onClick: () => void;
+};
+
 export type ToastItem = {
   id: string;
   title?: string;
   message: string;
   variant: ToastVariant;
   durationMs?: number;
+  actions?: ToastAction[];
 };
 
 type ToastContextValue = {
@@ -193,6 +199,42 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   <X size={18} />
                 </button>
               </div>
+
+              {t.actions?.length ? (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    padding: "0 12px 12px 58px", // ✅ zelfde layout + netjes uitlijnen
+                  }}
+                >
+                  {t.actions.map((a, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        // ✅ action uitvoeren en toast sluiten
+                        try {
+                          a.onClick();
+                        } finally {
+                          remove(t.id);
+                        }
+                      }}
+                      style={{
+                        padding: "8px 10px",
+                        borderRadius: 10,
+                        border: "1px solid rgba(255,255,255,0.14)",
+                        background: "rgba(255,255,255,0.06)",
+                        color: "white",
+                        cursor: "pointer",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {a.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </motion.div>
           ))}
         </AnimatePresence>
