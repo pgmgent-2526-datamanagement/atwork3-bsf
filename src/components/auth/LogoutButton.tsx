@@ -3,6 +3,7 @@ import styles from "./logoutButton.module.css";
 
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button } from "../ui/Button";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -13,9 +14,9 @@ export function LogoutButton() {
   }
 
     return (
-      <button className={styles.logoutButton} onClick={handleLogout}>
+      <Button className={styles.logoutButton} onClick={handleLogout}>
         <LogOut className="flex items-center gap-4" />
         Uitloggen
-      </button>
+      </Button>
     );
 }

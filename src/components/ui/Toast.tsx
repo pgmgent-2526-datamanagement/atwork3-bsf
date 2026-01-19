@@ -9,8 +9,14 @@ import React, {
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
+import { Button } from "./Button";
 
 export type ToastVariant = "success" | "error" | "info";
+
+export type ToastAction = {
+  label: string;
+  onClick: () => void;
+};
 
 export type ToastItem = {
   id: string;
@@ -18,6 +24,7 @@ export type ToastItem = {
   message: string;
   variant: ToastVariant;
   durationMs?: number;
+  actions?: ToastAction[];
 };
 
 type ToastContextValue = {
@@ -177,7 +184,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   </div>
                 </div>
 
-                <button
+                <Button
                   onClick={() => remove(t.id)}
                   type="button"
                   aria-label="Close toast"
@@ -191,8 +198,44 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   }}
                 >
                   <X size={18} />
-                </button>
+                </Button>
               </div>
+
+              {t.actions?.length ? (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    padding: "0 12px 12px 58px", // ✅ zelfde layout + netjes uitlijnen
+                  }}
+                >
+                  {t.actions.map((a, idx) => (
+                    <Button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        // ✅ action uitvoeren en toast sluiten
+                        try {
+                          a.onClick();
+                        } finally {
+                          remove(t.id);
+                        }
+                      }}
+                      style={{
+                        padding: "8px 10px",
+                        borderRadius: 10,
+                        border: "1px solid rgba(255,255,255,0.14)",
+                        background: "rgba(255,255,255,0.06)",
+                        color: "white",
+                        cursor: "pointer",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {a.label}
+                    </Button>
+                  ))}
+                </div>
+              ) : null}
             </motion.div>
           ))}
         </AnimatePresence>

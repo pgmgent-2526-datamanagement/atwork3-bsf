@@ -1,0 +1,86 @@
+/* Page wrapper */
+.container {
+  padding: 24px;
+}
+
+/* Titles */
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  margin-bottom: 18px;
+  opacity: 0.85;
+}
+
+/* Card layout */
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+/* Row helpers */
+.rowBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Text styles */
+.label {
+  font-weight: 600;
+}
+
+.value {
+  opacity: 0.9;
+}
+
+.muted {
+  opacity: 0.7;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+/* Sections */
+.sectionTitle {
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* Films grid */
+.filmGrid {
+  display: grid;
+  gap: 12px;
+}
+
+/* Film card */
+.filmCard {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fafafa;
+}
+
+/* Film content */
+.filmTitle {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.filmMeta {
+  opacity: 0.8;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.filmTagline {
+  opacity: 0.85;
+  margin-top: 2px;
+  font-size: 14px;
+}
