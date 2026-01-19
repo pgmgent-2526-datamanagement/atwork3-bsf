@@ -23,7 +23,6 @@ export interface CreateFilmInput {
    */
   image_path?: string | null;
   thumbnail_path?: string | null;
-  
 
   /**
    * Legacy Option A fields (keep optional during transition)
@@ -50,6 +49,7 @@ export interface UpdateFilmInput {
   thumbnail_url?: string | null;
 }
 
+
 /**
  * Data that comes in via import (CSV/Excel/JSON).
  * For Option B, import should provide image_path/thumbnail_path.
@@ -61,7 +61,7 @@ export interface ImportFilmInput {
   tagline?: string | null;
 
   image_path?: string | null;
-  image_text?: string | null; 
+  image_text?: string | null;
   thumbnail_path?: string | null;
 }
 
@@ -72,3 +72,20 @@ export interface VoteExportRow {
   onlineCount: number;
   total: number;
 }
+
+export type Film = FilmRow & {
+  votesTotal?: number | null;
+  imageUrl?: string | null;
+  thumbnailUrl?: string | null;
+};
+
+
+export type FilmsResponse = {
+  success: boolean;
+  films: Film[];
+  error?: string;
+};
+
+export type CreateFilmResponse =
+  | { success: true; film: Film }
+  | { success: false; error: string };
