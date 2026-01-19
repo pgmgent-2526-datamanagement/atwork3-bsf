@@ -1,0 +1,120 @@
+/* components/ui/ConfirmModal.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55); /* blauw/grijs */
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+.modal {
+  width: min(520px, 100%);
+  font-family: "Forum", sans-serif;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.title {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.closeBtn {
+  border: none;
+  background: #e2e8f0;
+  color: #0f172a;
+  cursor: pointer;
+  padding: 6px 10px;
+  font-family: "Forum", sans-serif;
+
+  border-radius: 10px;
+  transition: 0.15s;
+}
+
+.closeBtn:hover {
+  background: #cbd5f5;
+}
+
+.closeBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* BODY */
+.body {
+  padding: 16px;
+  color: #334155;
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+/* BUTTONS */
+.cancelBtn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-family: "Forum", sans-serif;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.cancelBtn:hover {
+  background: #f1f5f9;
+}
+
+.confirmBtn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-family: "Forum", sans-serif;
+
+  font-weight: 800;
+  cursor: pointer;
+  color: white;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transition: 0.15s;
+}
+
+.confirmBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+}
+
+/* DANGER */
+.confirmDanger {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+/* DISABLED */
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
