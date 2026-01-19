@@ -10,26 +10,27 @@ export type FilmRow = Tables<"film"> & {
   thumbnail_url?: string | null;
 };
 
-// export interface CreateFilmInput {
-//   title: string;
-//   maker?: string | null;
-//   tagline?: string | null;
-//   edition_id?: number | null;
+export interface CreateFilmInput {
+  title: string;
+  maker?: string | null;
+  tagline?: string | null;
+  edition_id?: number | null;
 
-//   /**
-//    * Option B (recommended): Storage object paths in bucket `film-images`
-//    * Example: "2026/the-godfather.jpg"
-//    */
-//   image_path?: string | null;
-//   thumbnail_path?: string | null;
+  /**
+   * Option B (recommended): Storage object paths in bucket `film-images`
+   * Example: "2026/the-godfather.jpg"
+   */
+  image_path?: string | null;
+  thumbnail_path?: string | null;
 
-//   /**
-//    * Legacy Option A fields (keep optional during transition)
-//    * You can remove later once everything uses paths.
-//    */
-//   image: File | null;
-//   thumbnail_url?: string | null;
-// }
+  /**
+   * Legacy Option A fields (keep optional during transition)
+   * You can remove later once everything uses paths.
+   */
+  image: File | null;
+  thumbnail_url?: string | null;
+}
+
 export type NewFilm = {
   title: string;
   tagline: string;
