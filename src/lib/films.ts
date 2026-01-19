@@ -1,36 +1,44 @@
-import { Film, UpdateFilmInput } from "../types/film";
-import { supabase } from "./supabaseClient";
+// lib/films.ts
+import { Film, UpdateFilmInput } from "@/types/film";
+
+type ApiOk<T> = { success: true } & T;
+type ApiErr = { success: false; error: string };
 
 export async function getFilms(): Promise<Film[]> {
-  const { data, error } = await supabase
-    .from("film") // <-- jouw table naam
-    .select("*")
-    .order("created_at", { ascending: false });
+  const res = await fetch("/api/films/get", { cache: "no-store" });
+  const json = (await res.json()) as ApiOk<{ films: Film[] }> | ApiErr;
 
-  if (error) {
-    throw new Error(error.message);
+  if (!res.ok || !json.success) {
+    throw new Error(!json.success ? json.error : "Failed to load films");
   }
-
-  return data as Film[];
+  return json.films;
 }
 
 export async function updateFilm(input: UpdateFilmInput): Promise<Film> {
-  const { id, ...patch } = input;
+  const res = await fetch("/api/films/update", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
 
-  // patch bevat alleen de velden die je wil updaten (optioneel)
-  const { data, error } = await supabase
-    .from("film")
-    .update(patch)
-    .eq("id", id)
-    .select("*")
-    .single();
+  const json = (await res.json()) as ApiOk<{ film: Film }> | ApiErr;
 
-  if (error) throw new Error(error.message);
-  return data as Film;
+  if (!res.ok || !json.success) {
+    throw new Error(!json.success ? json.error : "Update failed");
+  }
+  return json.film;
 }
 
 export async function deleteFilm(id: number): Promise<void> {
-  const { error } = await supabase.from("film").delete().eq("id", id);
+  const res = await fetch("/api/films/delete", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
+  });
 
-  if (error) throw new Error(error.message);
+  const json = (await res.json()) as ApiOk<Record<string, never>> | ApiErr;
+
+  if (!res.ok || !json.success) {
+    throw new Error(!json.success ? json.error : "Delete failed");
+  }
 }
