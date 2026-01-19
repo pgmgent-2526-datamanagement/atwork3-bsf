@@ -8,6 +8,7 @@ import { Pencil, Trash, Plus, X } from "lucide-react";
 import { updateFilm, deleteFilm } from "@/lib/films";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { useToast } from "@/components/ui/Toast";
+import { useFilmVoteResults } from "./useFilmVoteResults";
 
 export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
   const toast = useToast();
@@ -29,6 +30,7 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
   const [confirmTitle, setConfirmTitle] = useState("");
   const [confirmMessage, setConfirmMessage] = useState("");
   const [confirmBusy, setConfirmBusy] = useState(false);
+  const { voteMap, votesLoading, votesError } = useFilmVoteResults(5000);
 
   const [form, setForm] = useState<NewFilm>({
     title: "",
@@ -175,43 +177,56 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
       </p>
 
       {error && <p className={styles.error}>{error}</p>}
+      {votesError && <p className={styles.error}>Votes: {votesError}</p>}
 
       <div className={styles.list}>
         {films.length === 0 ? (
           <p>Geen films gevonden.</p>
         ) : (
-          films.map((film) => (
-            <article key={film.id} className={styles.card}>
-              <div>
-                <h3>{film.title}</h3>
-                <span className={styles.meta}>
-                  {film.maker ?? "—"}
-                  {film.tagline ? ` • ${film.tagline}` : ""}
-                </span>
-                <p className={styles.votes}>
-                  {film.votesTotal ?? 0} stemmen totaal
-                </p>
-              </div>
+          films.map((film) => {
+            const v = voteMap.get(film.id);
 
-              <div className={styles.actions}>
-                <button
-                  onClick={() => openEditModal(film)}
-                  className={styles.editButton}
-                  aria-label="Edit"
-                >
-                  <Pencil size={16} />
-                </button>
+            return (
+              <article key={film.id} className={styles.card}>
+                <div>
+                  <h3>{film.title}</h3>
+                  <span className={styles.meta}>
+                    {film.maker ?? "—"}
+                    {film.tagline ? ` • ${film.tagline}` : ""}
+                  </span>
 
-                <button
-                  onClick={() => requestDelete(film.id, film.title)}
-                  className={styles.deleteButton}
-                  aria-label="Delete"
-                >
-                  <Trash size={16} />
-                </button>
-              </div>
-            </article>
-          ))
+                  <p className={styles.votes}>
+                    {votesLoading ? (
+                      "Votes laden…"
+                    ) : (
+                      <>
+                        {v?.votes ?? 0} stemmen totaal (zaal:{" "}
+                        {v?.zaalCount ?? 0} / online: {v?.onlineCount ?? 0})
+                      </>
+                    )}
+                  </p>
+                </div>
+
+                <div className={styles.actions}>
+                  <Button
+                    onClick={() => openEditModal(film)}
+                    className={styles.editButton}
+                    aria-label="Edit"
+                  >
+                    <Pencil size={16} />
+                  </Button>
+
+                  <Button
+                    onClick={() => requestDelete(film.id, film.title)}
+                    className={styles.deleteButton}
+                    aria-label="Delete"
+                  >
+                    <Trash size={16} />
+                  </Button>
+                </div>
+              </article>
+            );
+          })
         )}
       </div>
 
@@ -221,9 +236,9 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <h3>{isEditing ? "Film bewerken" : "Film toevoegen"}</h3>
-              <button className={styles.modalClose} onClick={closeModal}>
+              <Button className={styles.modalClose} onClick={closeModal}>
                 <X size={16} />
-              </button>
+              </Button>
             </div>
 
             <form className={styles.form} onSubmit={handleSubmit}>
