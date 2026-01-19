@@ -10,27 +10,32 @@ export type FilmRow = Tables<"film"> & {
   thumbnail_url?: string | null;
 };
 
-export interface CreateFilmInput {
+// export interface CreateFilmInput {
+//   title: string;
+//   maker?: string | null;
+//   tagline?: string | null;
+//   edition_id?: number | null;
+
+//   /**
+//    * Option B (recommended): Storage object paths in bucket `film-images`
+//    * Example: "2026/the-godfather.jpg"
+//    */
+//   image_path?: string | null;
+//   thumbnail_path?: string | null;
+
+//   /**
+//    * Legacy Option A fields (keep optional during transition)
+//    * You can remove later once everything uses paths.
+//    */
+//   image: File | null;
+//   thumbnail_url?: string | null;
+// }
+export type NewFilm = {
   title: string;
-  number?: number;
-  maker?: string | null;
-  tagline?: string | null;
-  edition_id?: number | null;
-
-  /**
-   * Option B (recommended): Storage object paths in bucket `film-images`
-   * Example: "2026/the-godfather.jpg"
-   */
-  image_path?: string | null;
-  thumbnail_path?: string | null;
-
-  /**
-   * Legacy Option A fields (keep optional during transition)
-   * You can remove later once everything uses paths.
-   */
-  image_url?: string | null;
-  thumbnail_url?: string | null;
-}
+  tagline: string;
+  maker: string;
+  image: File | null;
+};
 
 export interface UpdateFilmInput {
   id: number;
@@ -45,10 +50,9 @@ export interface UpdateFilmInput {
   thumbnail_path?: string | null;
 
   // legacy (optional)
-  image_url?: string | null;
+  image?: File | null;
   thumbnail_url?: string | null;
 }
-
 
 /**
  * Data that comes in via import (CSV/Excel/JSON).
@@ -78,7 +82,6 @@ export type Film = FilmRow & {
   imageUrl?: string | null;
   thumbnailUrl?: string | null;
 };
-
 
 export type FilmsResponse = {
   success: boolean;
