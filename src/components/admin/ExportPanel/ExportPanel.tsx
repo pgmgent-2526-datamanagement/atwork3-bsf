@@ -25,7 +25,7 @@ const handleExport = (format: "csv" | "xlsx") => {
 
       {/* Export Options */}
       <div className={styles.exportGrid}>
-        <button
+        <Button
           className={styles.exportButton}
           onClick={() => handleExport("csv")}
         >
@@ -34,9 +34,9 @@ const handleExport = (format: "csv" | "xlsx") => {
           />
           <h3 className={styles.exportTitle}>CSV Export</h3>
           <p className={styles.exportDescription}>Spreadsheet (CSV)</p>
-        </button>
+        </Button>
 
-        <button
+        <Button
           className={styles.exportButton}
           onClick={() => handleExport("xlsx")}
         >
@@ -45,7 +45,7 @@ const handleExport = (format: "csv" | "xlsx") => {
           />
           <h3 className={styles.exportTitle}>Excel Export</h3>
           <p className={styles.exportDescription}>.xlsx (Excel)</p>
-        </button>
+        </Button>
       </div>
 
       {/* Quick Export */}
@@ -80,9 +80,9 @@ const handleExport = (format: "csv" | "xlsx") => {
 
               <div className={styles.historyItemRight}>
                 <span className={styles.historySize}>{item.size}</span>
-                <button className={styles.historyDownload}>
+                <Button className={styles.historyDownload}>
                   <Download className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
             </div>
           ))}

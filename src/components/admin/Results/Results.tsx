@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { TrendingUp, Users, Trophy, Building2, Home } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import styles from "./Results.module.css";
 
 interface FilmResult {
@@ -19,7 +20,7 @@ type CombinedApiResponse =
 
 export default function Results() {
   const [activeTab, setActiveTab] = useState<"all" | "eventhall" | "home">(
-    "all"
+    "all",
   );
   const [results, setResults] = useState<FilmResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,28 +63,28 @@ export default function Results() {
 
   const totalVotes = useMemo(
     () => results.reduce((s, f) => s + f.votes, 0),
-    [results]
+    [results],
   );
   const totalEventHallVotes = useMemo(
     () => results.reduce((s, f) => s + f.votesEventHall, 0),
-    [results]
+    [results],
   );
   const totalHomeVotes = useMemo(
     () => results.reduce((s, f) => s + f.votesHome, 0),
-    [results]
+    [results],
   );
 
   const sortedTotal = useMemo(
     () => [...results].sort((a, b) => b.votes - a.votes),
-    [results]
+    [results],
   );
   const sortedEventHall = useMemo(
     () => [...results].sort((a, b) => b.votesEventHall - a.votesEventHall),
-    [results]
+    [results],
   );
   const sortedHome = useMemo(
     () => [...results].sort((a, b) => b.votesHome - a.votesHome),
-    [results]
+    [results],
   );
 
   const keyOf = (film: FilmResult, tab: string, index: number) =>
@@ -153,16 +154,16 @@ export default function Results() {
       </div>
 
       <div className={styles.tabs}>
-        <button
+        <Button
           onClick={() => setActiveTab("all")}
           className={`${styles.tab} ${
             activeTab === "all" ? styles.tabActive : ""
           }`}
         >
           Alle Stemmen
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={() => setActiveTab("eventhall")}
           className={`${styles.tab} ${
             activeTab === "eventhall" ? styles.tabActive : ""
@@ -170,9 +171,9 @@ export default function Results() {
         >
           <Building2 className={styles.tabIcon} />
           Event Hall
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={() => setActiveTab("home")}
           className={`${styles.tab} ${
             activeTab === "home" ? styles.tabActive : ""
@@ -180,7 +181,7 @@ export default function Results() {
         >
           <Home className={styles.tabIcon} />
           Thuis
-        </button>
+        </Button>
       </div>
 
       {activeTab === "all" && (
@@ -193,10 +194,10 @@ export default function Results() {
                     index === 0
                       ? styles.rankBadgeGold
                       : index === 1
-                      ? styles.rankBadgeSilver
-                      : index === 2
-                      ? styles.rankBadgeBronze
-                      : styles.rankBadgeDefault
+                        ? styles.rankBadgeSilver
+                        : index === 2
+                          ? styles.rankBadgeBronze
+                          : styles.rankBadgeDefault
                   }`}
                 >
                   {index + 1}
@@ -213,10 +214,10 @@ export default function Results() {
                         index === 0
                           ? styles.progressFillGold
                           : index === 1
-                          ? styles.progressFillSilver
-                          : index === 2
-                          ? styles.progressFillBronze
-                          : styles.progressFillDefault
+                            ? styles.progressFillSilver
+                            : index === 2
+                              ? styles.progressFillBronze
+                              : styles.progressFillDefault
                       }`}
                       style={{ width: `${film.percentage}%` }}
                     />

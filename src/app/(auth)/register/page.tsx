@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "../SignUp.module.css";
 import { authClient } from "@/services/authClient";
+import { Button } from "@/components/ui/Button";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -99,9 +100,9 @@ export default function SignUpPage() {
 
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-        <button type="submit" disabled={loading} className={styles.button}>
+        <Button type="submit" disabled={loading} className={styles.button}>
           {loading ? "Registering..." : "Sign Up"}
-        </button>
+        </Button>
       </form>
 
       <p className={styles.redirect}>
