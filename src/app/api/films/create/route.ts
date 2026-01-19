@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       title,
       tagline,
       maker,
-      image_path,
+      image,
     });
 
     return NextResponse.json({ success: true, film });
