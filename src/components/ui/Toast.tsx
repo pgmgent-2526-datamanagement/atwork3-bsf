@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
+import { Button } from "./Button";
 
 export type ToastVariant = "success" | "error" | "info";
 
@@ -183,7 +184,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   </div>
                 </div>
 
-                <button
+                <Button
                   onClick={() => remove(t.id)}
                   type="button"
                   aria-label="Close toast"
@@ -197,7 +198,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   }}
                 >
                   <X size={18} />
-                </button>
+                </Button>
               </div>
 
               {t.actions?.length ? (
@@ -209,7 +210,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   }}
                 >
                   {t.actions.map((a, idx) => (
-                    <button
+                    <Button
                       key={idx}
                       type="button"
                       onClick={() => {
@@ -231,7 +232,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                       }}
                     >
                       {a.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               ) : null}

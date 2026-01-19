@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import styles from "./ConfirmModal.module.css";
+import { Button } from "./Button";
 
 type ConfirmModalProps = {
   open: boolean;
@@ -33,29 +34,29 @@ export function ConfirmModal({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <div className={styles.title}>{title}</div>
-          <button
+          <Button
             type="button"
             onClick={onCancel}
             disabled={busy}
             className={`${styles.closeBtn} ${busy ? styles.disabled : ""}`}
           >
             <X size={18} />
-          </button>
+          </Button>
         </div>
 
         <div className={styles.body}>{message}</div>
 
         <div className={styles.footer}>
-          <button
+          <Button
             type="button"
             onClick={onCancel}
             disabled={busy}
             className={`${styles.cancelBtn} ${busy ? styles.disabled : ""}`}
           >
             {cancelText}
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
             onClick={onConfirm}
             disabled={busy}
@@ -64,7 +65,7 @@ export function ConfirmModal({
             } ${busy ? styles.disabled : ""}`}
           >
             {busy ? "Bezig..." : confirmText}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
