@@ -7,7 +7,7 @@ export default function OnlinePage() {
   const router = useRouter();
 
   const handleVoteConfirmed = (filmId: number) => {
-    router.push(`/vote/online/success?filmId=${filmId}`);
+    router.push(`/vote/online/succes?filmId=${filmId}`);
   };
 
   return <VotingPage source="online" onVoteConfirmed={handleVoteConfirmed} />;
