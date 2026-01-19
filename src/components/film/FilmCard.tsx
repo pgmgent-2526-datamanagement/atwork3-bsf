@@ -49,7 +49,7 @@ export function FilmCard({
         )}
       </div>
 
-      <div className={styles["voting-page__film-body"]}>
+      <article className={styles["voting-page__film-body"]}>
         <div className={styles["voting-page__film-titleRow"]}>
           <Film className={styles["voting-page__film-icon"]} />
           <h3 className={styles["voting-page__film-title"]}>{title}</h3>
@@ -57,15 +57,14 @@ export function FilmCard({
             <ArrowRight className={styles["voting-page__film-arrow-icon"]} />
           </span>
         </div>
+          {maker ? (
+            <p className={styles["voting-page__film-meta"]}>Door {maker}</p>
+          ) : null}
 
-        {maker ? (
-          <p className={styles["voting-page__film-meta"]}>Door {maker}</p>
-        ) : null}
-
-        {tagline ? (
-          <p className={styles["voting-page__film-tagline"]}>{tagline}</p>
-        ) : null}
-      </div>
+          {tagline ? (
+            <p className={styles["voting-page__film-tagline"]}>{tagline}</p>
+          ) : null}
+      </article>
     </motion.button>
   );
 }
