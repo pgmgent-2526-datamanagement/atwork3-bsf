@@ -15,13 +15,13 @@ export interface CreateFilmInput {
   maker?: string | null;
   tagline?: string | null;
   edition_id?: number | null;
-  image: File | null;
+  image?: File | null;
   /**
    * Option B (recommended): Storage object paths in bucket `film-images`
    * Example: "2026/the-godfather.jpg"
    */
   thumbnail_path?: string | null;
-
+  image_path?: string | null;
   /**
    * Legacy Option A fields (keep optional during transition)
    * You can remove later once everything uses paths.
