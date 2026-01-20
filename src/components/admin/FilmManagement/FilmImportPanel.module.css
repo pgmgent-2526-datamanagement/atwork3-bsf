@@ -1,0 +1,79 @@
+.container {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+.title {
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.subtext {
+  margin: 0 0 1.5rem;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.file {
+  color: #111827;
+}
+
+.importButton {
+  white-space: nowrap;
+}
+
+.error {
+  color: #ef4444;
+  margin: 0.75rem 0 0;
+}
+
+.info {
+  color: #16a34a;
+  margin: 0.75rem 0 0;
+}
+
+.preview {
+  margin-top: 1.25rem;
+}
+
+.tableWrap {
+  overflow: auto;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.table th,
+.table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #111827;
+  vertical-align: top;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  font-weight: 700;
+}
