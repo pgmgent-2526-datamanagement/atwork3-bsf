@@ -20,8 +20,8 @@ export const exportService = {
       return {
         filmId: r.filmId,
         title: f?.title ?? "Onbekend",
-        zaalCount: r.zaalCount,
-        onlineCount: r.onlineCount,
+        zaalCount: r.votesEventHall,
+        onlineCount: r.votesHome,
         total: r.total,
       };
     });
