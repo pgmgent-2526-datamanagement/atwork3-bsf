@@ -112,7 +112,7 @@ export default function Results() {
 
         <div className={styles.card}>
           <div className={styles.statHeader}>
-            <span>Event Hall</span>
+            <span>Zaal</span>
             <Building2 className={styles.statIcon} />
           </div>
           <div className={styles.statValue}>{totalEventHallVotes}</div>
