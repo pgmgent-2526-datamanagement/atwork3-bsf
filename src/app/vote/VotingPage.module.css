@@ -320,6 +320,10 @@
 
 /* Mobile tweaks */
 @media (max-width: 480px) {
+  .voting-page__film-body {
+    min-width: 0;
+    overflow: hidden; /* belangrijk */
+  }
   .voting-page__list {
     padding: 0.5rem 0.75rem 1.6rem;
     gap: 0.6rem;
@@ -336,11 +340,18 @@
     height: 46px;
   }
 
+  .voting-page__film-titleRow {
+    min-width: 0;
+    overflow: hidden; /* belangrijk */
+  }
+
   /* title mag 2 lijnen op mobile */
   .voting-page__film-title {
     white-space: normal;
     display: -webkit-box;
     line-clamp: 2;
+    min-width: 0;
+    max-width: 100%;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
