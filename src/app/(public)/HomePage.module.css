@@ -91,6 +91,7 @@
 .homepage__start-button {
   position: relative;
   padding: 1rem 3rem;
+  font-family: "Forum", sans-serif;
   border: none;
   border-radius: 999px;
   background-image: linear-gradient(to right, #ec4899, #a855f7, #22d3ee);
@@ -120,8 +121,6 @@
   font-size: 0.95rem;
 }
 
-
-
 .homepage__admin-wrapper {
   margin-top: 1.2rem;
   display: none;
@@ -134,17 +133,16 @@
   }
 }
 
-
-
 .homepage__admin-button {
   position: relative;
-  padding: 1rem 2.5rem;
+  padding: 1rem 3rem;
   border: none;
   border-radius: 999px;
   background: transparent;
   border: 2px solid #22d3ee;
   color: #22d3ee;
   font-size: 1rem;
+  font-family: "Forum", sans-serif;
   font-weight: 500;
   cursor: pointer;
   overflow: hidden;
