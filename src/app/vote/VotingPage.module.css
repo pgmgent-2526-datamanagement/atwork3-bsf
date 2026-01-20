@@ -195,10 +195,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
+
   width: 38px;
   height: 38px;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+
+  margin: 0; /* ✅ weg met margin-top + margin-left */
+  margin-left: auto;
+  flex: 0 0 auto;
   margin-top: 2rem;
+  flex-shrink: 0;
+
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
@@ -347,10 +355,9 @@
 
   /* title mag 2 lijnen op mobile */
   .voting-page__film-title {
-    white-space: normal;
     display: -webkit-box;
-    line-clamp: 2;
     min-width: 0;
+    line-clamp: 2;
     max-width: 100%;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
