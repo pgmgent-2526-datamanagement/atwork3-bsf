@@ -2,7 +2,6 @@ import { FilmManagement } from "@/components/admin/FilmManagement/FilmManagement
 import { requireAdmin } from "@/lib/adminGuard";
 import { filmService } from "@/services/filmService";
 
-
 export const dynamic = "force-dynamic";
 
 export default async function FilmsPage() {
