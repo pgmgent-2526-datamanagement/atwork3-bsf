@@ -2,8 +2,7 @@
 
 import { HomePage } from "@/components/home/HomePage";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
-import { Suspense } from "react";
+import { useEffect, useMemo, Suspense } from "react";
 
 type Mode = "zaal" | "online";
 
@@ -32,14 +31,17 @@ export default function HomeClient() {
   }, [modeFromUrl]);
 
   const onStartVoting = () => {
-    // default als niemand via QR kwam
     const finalMode: Mode = mode ?? "online";
     router.push(finalMode === "zaal" ? "/vote/zaal" : "/vote/online");
   };
 
+  const onAdminLogin = () => {
+    router.push("/admin");
+  };
+
   return (
     <Suspense>
-      <HomePage onStartVoting={onStartVoting} />;
+      <HomePage onStartVoting={onStartVoting} onAdminLogin={onAdminLogin} />
     </Suspense>
   );
 }
