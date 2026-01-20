@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./VotingControl.module.css";
 import { Button } from "@/components/ui/Button";
 import { Home, Building2 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 type ActiveSession = { type: "zaal" | "online" };
 
@@ -19,6 +20,10 @@ function durationLabel(seconds: number) {
 export default function VotingControl() {
   const toast = useToast();
   const [active, setActive] = useState({ zaal: false, online: false });
+
+  const [confirmOpenAllOpen, setConfirmOpenAllOpen] = useState(false);
+  const [busyOpenAllOpen, setBusyOpenAllOpen] = useState(false);
+  const autoPopupShownRef = useRef(false);
 
   const fetchStatus = useCallback(async (signal?: AbortSignal) => {
     const res = await fetch("/api/votes/status", { cache: "no-store", signal });
@@ -58,6 +63,21 @@ export default function VotingControl() {
     };
   }, [fetchStatus]);
 
+  // ✅ Auto popup after 5 minutes
+  useEffect(() => {
+    const t = window.setTimeout(
+      () => {
+        if (!autoPopupShownRef.current) {
+          autoPopupShownRef.current = true;
+          setConfirmOpenAllOpen(true);
+        }
+      },
+      5 * 60 * 1000,
+    );
+
+    return () => window.clearTimeout(t);
+  }, []);
+
   async function start(source: "zaal" | "online") {
     try {
       const res = await fetch("/api/votes/start", {
@@ -77,7 +97,7 @@ export default function VotingControl() {
         `${
           source === "zaal" ? "Event Hall" : "Online"
         } is open (${durationLabel(DURATION_SECONDS)}).`,
-        "Stemming geopend"
+        "Stemming geopend",
       );
       fetchStatus().catch(() => {});
     } catch {
@@ -102,7 +122,7 @@ export default function VotingControl() {
 
       toast.info(
         `${source === "zaal" ? "Event Hall" : "Online"} is gesloten.`,
-        "Stemming gesloten"
+        "Stemming gesloten",
       );
       fetchStatus().catch(() => {});
     } catch {
@@ -122,6 +142,20 @@ export default function VotingControl() {
   const allClosed = !active.zaal && !active.online;
   const partialOpen = !allOpen && !allClosed;
   const durLabel = durationLabel(DURATION_SECONDS);
+
+  const openAllWithConfirm = () => {
+    setConfirmOpenAllOpen(true);
+  };
+
+  const onConfirmOpenAllOpen = async () => {
+    try {
+      setBusyOpenAllOpen(true);
+      await openAll();
+      setConfirmOpenAllOpen(false);
+    } finally {
+      setBusyOpenAllOpen(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -204,13 +238,25 @@ export default function VotingControl() {
       </div>
 
       <div className={styles.actionButtons}>
-        {!allOpen && <Button onClick={openAll}>Alles Open</Button>}
+        {!allOpen && <Button onClick={openAllWithConfirm}>Alles Open</Button>}
         {!allClosed && (
           <Button onClick={closeAll} style={{ background: "#dc2626" }}>
             Alles Sluiten
           </Button>
         )}
       </div>
+
+      <ConfirmModal
+        open={confirmOpenAllOpen}
+        title="Weet je het zeker?"
+        message="Weet je het zeker? Dit zal alle stemmen verwijderen uit de resultaten en een nieuwe stemsessie starten."
+        confirmText="Ja, doorgaan"
+        cancelText="Annuleren"
+        danger
+        busy={busyOpenAllOpen}
+        onCancel={() => setConfirmOpenAllOpen(false)}
+        onConfirm={onConfirmOpenAllOpen}
+      />
     </div>
   );
 }
