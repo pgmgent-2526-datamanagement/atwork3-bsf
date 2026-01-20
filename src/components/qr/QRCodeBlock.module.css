@@ -14,3 +14,33 @@
   opacity: 0.8;
   margin-bottom: 1rem;
 }
+
+.downloadBtn {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.4rem;
+  border: none;
+
+  background: #3b82f6;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.downloadBtn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.downloadBtn:active {
+  transform: scale(0.97);
+}
