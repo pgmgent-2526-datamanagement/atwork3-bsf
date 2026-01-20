@@ -159,16 +159,20 @@ export default function ExportPanel() {
       {/* Export + Import cards next to each other */}
       <div className={styles.exportGrid}>
         {/* Excel Export Card */}
-        <Button className={styles.exportButton} onClick={handleExport}>
+        <article className={styles.exportButton} onClick={handleExport}>
           <FileSpreadsheet
             className={`${styles.exportIcon} ${styles.exportIconGreen}`}
           />
           <h3 className={styles.exportTitle}>Excel Export</h3>
           <p className={styles.exportDescription}>.xlsx (Excel)</p>
-        </Button>
+          <Button onClick={handleExport} className={styles.quickExportButton}>
+            <Download size={16} />
+            Volledige Export Downloaden
+          </Button>
+        </article>
 
         {/* CSV Import Card */}
-        <div className={styles.importCard}>
+        <article className={styles.importCard}>
           <Upload
             className={`${styles.exportIcon} ${styles.exportIconPurple}`}
           />
@@ -178,19 +182,22 @@ export default function ExportPanel() {
           </p>
 
           <div className={styles.importControls}>
-            <input
-              className={styles.importFile}
-              type="file"
-              accept=".csv"
-              onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
-            />
+            <label className={styles.uploadButton}>
+              <Upload size={16} /> Kies CSV bestand
+              <input
+                type="file"
+                accept=".csv"
+                className={styles.hiddenFileInput}
+                onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+              />
+            </label>
 
             <Button
               className={styles.importPrimaryButton}
               onClick={doImport}
               disabled={!file || !rawRows.length || isImporting}
             >
-              <Upload className="w-4 h-4" />
+              <Upload size={16} />
               {isImporting ? "Importeren..." : "Importeer films"}
             </Button>
           </div>
@@ -222,14 +229,7 @@ export default function ExportPanel() {
               </table>
             </div>
           )}
-        </div>
-      </div>
-
-      <div className={styles.quickExport}>
-        <Button onClick={handleExport} className={styles.quickExportButton}>
-          <Download className="w-4 h-4" />
-          Volledige Export Downloaden
-        </Button>
+        </article>
       </div>
 
       <div>
