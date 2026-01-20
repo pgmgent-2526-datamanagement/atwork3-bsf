@@ -1,10 +1,8 @@
-// services/exportService.ts
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { VoteExportRow } from "@/types/film";
 import { voteService } from "@/services/voteService";
 import { filmService } from "@/services/filmService";
-
 
 type DB = SupabaseClient<Database>;
 
@@ -29,5 +27,3 @@ export const exportService = {
     });
   },
 };
-
-

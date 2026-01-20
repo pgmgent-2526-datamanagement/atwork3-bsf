@@ -1,31 +1,6 @@
 import ExcelJS from "exceljs";
 import type { VoteExportRow } from "@/types/film";
 
-function csvEscape(value: unknown): string {
-  const s = String(value ?? "");
-  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
-}
-
-export function makeCsv(rows: VoteExportRow[]): string {
-  const headers = ["filmId", "title", "zaalCount", "onlineCount", "total"];
-
-  const lines = [
-    headers.join(","),
-    ...rows.map((r) =>
-      [
-        csvEscape(r.filmId ?? ""),
-        csvEscape(r.title ?? ""),
-        csvEscape(r.zaalCount ?? 0),
-        csvEscape(r.onlineCount ?? 0),
-        csvEscape(r.total ?? 0),
-      ].join(",")
-    ),
-  ];
-
-  return lines.join("\n");
-}
-
 export async function makeExcel(rows: VoteExportRow[]): Promise<ArrayBuffer> {
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Results");
@@ -48,7 +23,7 @@ export async function makeExcel(rows: VoteExportRow[]): Promise<ArrayBuffer> {
       zaalCount: r.zaalCount ?? 0,
       onlineCount: r.onlineCount ?? 0,
       total: r.total ?? 0,
-    }))
+    })),
   );
 
   ws.autoFilter = {

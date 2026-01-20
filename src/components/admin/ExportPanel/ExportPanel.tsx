@@ -1,73 +1,244 @@
 "use client";
 
-import {
-  Download,
-  FileSpreadsheet,
-  Calendar,
-} from "lucide-react";
+import Papa, { ParseResult } from "papaparse";
+import { useMemo, useState } from "react";
+import { Calendar, Download, FileSpreadsheet, Upload } from "lucide-react";
+
 import styles from "./ExportPanel.module.css";
 import { Button } from "@/components/ui/Button";
 
-export default function ExportPanel() {
-const handleExport = (format: "csv" | "xlsx") => {
-  // zet hier jouw echte endpoint path:
-  const url = `/api/admin/export?format=${format}`;
-  window.location.href = url;
+type CsvRow = {
+  title?: string;
+  maker?: string;
+  image_text?: string;
+  tagline?: string;
+  thumbnail_url?: string;
+  image_url?: string;
 };
 
+type PreviewRow = {
+  title: string;
+  maker: string;
+  image_text: string;
+  tagline: string | null;
+  thumbnail_url: string | null;
+  image_url: string | null;
+};
+
+type ImportResponse =
+  | { success: true; inserted: number; edition_id: number }
+  | { success: false; error: string };
+
+function clean(value: unknown): string {
+  return String(value ?? "").trim();
+}
+
+export default function ExportPanel() {
+  const handleExport = () => {
+    window.location.href = "/api/films/export";
+  };
+
+  // --- IMPORT STATE ---
+  const [file, setFile] = useState<File | null>(null);
+  const [rawRows, setRawRows] = useState<CsvRow[]>([]);
+  const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
+
+  const preview: PreviewRow[] = useMemo(() => {
+    return rawRows.map((r) => {
+      const title = clean(r.title);
+      const maker = clean(r.maker);
+      const image_text = clean(r.image_text);
+      const tagline = clean(r.tagline);
+
+      return {
+        title,
+        maker,
+        image_text,
+        tagline: tagline || null,
+        thumbnail_url: r.thumbnail_url ? clean(r.thumbnail_url) : null,
+        image_url: r.image_url ? clean(r.image_url) : null,
+      };
+    });
+  }, [rawRows]);
+
+  const previewTop = useMemo(() => preview.slice(0, 10), [preview]);
+
+  const validatePreview = () => {
+    for (let i = 0; i < preview.length; i++) {
+      const row = preview[i];
+      if (!row.title || !row.maker || !row.image_text) {
+        throw new Error(`Rij ${i + 2}: ontbreekt title, maker of image_text.`);
+      }
+    }
+  };
+
+  const onPickFile = async (f: File | null) => {
+    setError("");
+    setInfo("");
+    setRawRows([]);
+    setFile(f);
+
+    if (!f) return;
+
+    if (!f.name.toLowerCase().endsWith(".csv")) {
+      setError("Alleen .csv bestanden zijn toegestaan.");
+      return;
+    }
+
+    const text = await f.text();
+
+    const parsed: ParseResult<CsvRow> = Papa.parse<CsvRow>(text, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (h: string) => h.trim(),
+      transform: (v: string) => v.trim(),
+    });
+
+    if (parsed.errors.length) {
+      setError(parsed.errors[0].message);
+      return;
+    }
+
+    const rows = parsed.data ?? [];
+    if (!rows.length) {
+      setError("CSV bevat geen rijen.");
+      return;
+    }
+
+    setRawRows(rows);
+    setInfo(
+      `Preview geladen: ${rows.length} rij(en). Vereist: title, maker, image_text`,
+    );
+  };
+
+  const doImport = async () => {
+    try {
+      setError("");
+      setInfo("");
+
+      if (!file) {
+        setError("Kies eerst een CSV bestand.");
+        return;
+      }
+
+      validatePreview();
+      setIsImporting(true);
+
+      const fd = new FormData();
+      fd.append("file", file);
+
+      const res = await fetch("/api/films/import", {
+        method: "POST",
+        body: fd,
+      });
+
+      const data: ImportResponse = await res.json();
+
+      if (!res.ok || !data.success) {
+        setError(data.success ? "Onbekende fout" : data.error);
+        return;
+      }
+
+      setInfo(
+        `✅ Import gelukt: ${data.inserted} films toegevoegd (edition ${data.edition_id})`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Onbekende fout");
+    } finally {
+      setIsImporting(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
       <h2>Export Resultaten</h2>
-      <p className={styles.subtext}>
-        Download stemming data in verschillende formaten (met locatie breakdown)
-      </p>
+      <p className={styles.subtext}>Download stemming data in Excel formaat</p>
 
-      {/* Export Options */}
+      {/* Export + Import cards next to each other */}
       <div className={styles.exportGrid}>
-        <Button
-          className={styles.exportButton}
-          onClick={() => handleExport("csv")}
-        >
-          <FileSpreadsheet
-            className={`${styles.exportIcon} ${styles.exportIconBlue}`}
-          />
-          <h3 className={styles.exportTitle}>CSV Export</h3>
-          <p className={styles.exportDescription}>Spreadsheet (CSV)</p>
-        </Button>
-
-        <Button
-          className={styles.exportButton}
-          onClick={() => handleExport("xlsx")}
-        >
+        {/* Excel Export Card */}
+        <Button className={styles.exportButton} onClick={handleExport}>
           <FileSpreadsheet
             className={`${styles.exportIcon} ${styles.exportIconGreen}`}
           />
           <h3 className={styles.exportTitle}>Excel Export</h3>
           <p className={styles.exportDescription}>.xlsx (Excel)</p>
         </Button>
+
+        {/* CSV Import Card */}
+        <div className={styles.importCard}>
+          <Upload
+            className={`${styles.exportIcon} ${styles.exportIconPurple}`}
+          />
+          <h3 className={styles.exportTitle}>Films Import (CSV)</h3>
+          <p className={styles.exportDescription}>
+            Upload CSV en importeer naar actieve editie
+          </p>
+
+          <div className={styles.importControls}>
+            <input
+              className={styles.importFile}
+              type="file"
+              accept=".csv"
+              onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+            />
+
+            <Button
+              className={styles.importPrimaryButton}
+              onClick={doImport}
+              disabled={!file || !rawRows.length || isImporting}
+            >
+              <Upload className="w-4 h-4" />
+              {isImporting ? "Importeren..." : "Importeer films"}
+            </Button>
+          </div>
+
+          {error && <p className={styles.importError}>{error}</p>}
+          {info && <p className={styles.importInfo}>{info}</p>}
+
+          {!!previewTop.length && (
+            <div className={styles.previewWrap}>
+              <table className={styles.previewTable}>
+                <thead>
+                  <tr>
+                    <th>title</th>
+                    <th>maker</th>
+                    <th>image_text</th>
+                    <th>tagline</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {previewTop.map((r, i) => (
+                    <tr key={i}>
+                      <td>{r.title}</td>
+                      <td>{r.maker}</td>
+                      <td>{r.image_text}</td>
+                      <td>{r.tagline ?? ""}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Quick Export */}
       <div className={styles.quickExport}>
-        <Button
-          onClick={() => handleExport("xlsx")}
-          className={styles.quickExportButton}
-        >
-          <Download className="w-4 h-4 mr-2" />
-          Volledige Export Downloaden (Excel)
+        <Button onClick={handleExport} className={styles.quickExportButton}>
+          <Download className="w-4 h-4" />
+          Volledige Export Downloaden
         </Button>
       </div>
 
-      {/* Export History */}
       <div>
         <h3 className={styles.optionsTitle}>Export Geschiedenis</h3>
 
         <div className={styles.historyList}>
           {[
-            { date: "2025-11-20 14:30", format: "CSV", size: "2.3 KB" },
-            { date: "2025-11-20 10:15", format: "JSON", size: "4.1 KB" },
-            { date: "2025-11-19 16:45", format: "CSV", size: "2.1 KB" },
+            { date: "2025-11-20 14:30", format: "Excel" },
+            { date: "2025-11-19 16:45", format: "Excel" },
           ].map((item, i) => (
             <div key={i} className={styles.historyItem}>
               <div className={styles.historyItemLeft}>
@@ -79,8 +250,10 @@ const handleExport = (format: "csv" | "xlsx") => {
               </div>
 
               <div className={styles.historyItemRight}>
-                <span className={styles.historySize}>{item.size}</span>
-                <Button className={styles.historyDownload}>
+                <Button
+                  className={styles.historyDownload}
+                  onClick={handleExport}
+                >
                   <Download className="w-4 h-4" />
                 </Button>
               </div>
