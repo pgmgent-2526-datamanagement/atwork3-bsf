@@ -71,7 +71,9 @@
 
 .quickExportButton {
   width: 100%;
+  margin-top: 3rem;
   font-family: "Forum", sans-serif;
+
 }
 
 /******** HISTORY ********/
@@ -139,9 +141,9 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.9rem 1.4rem;
+  padding: 0.9rem .5rem;
 
-  background: #3b82f6; /* primary blauw */
+  background: linear-gradient(to right, rgb(5, 150, 105), #4d8918);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -158,7 +160,7 @@
 
 /* Hover effect */
 .quickExportButton:hover {
-  background: #2563eb; /* donkerder blauw */
+  background: rgb(4, 121, 84); /* donkerder blauw */
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
@@ -198,11 +200,12 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  font-family: "Forum", sans-serif;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.9rem 1.4rem;
+  padding: 0.9rem .5rem;
 
-  background: #7c3aed; /* purple */
+  background: linear-gradient(to right, #6366f1, #a855f7);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -227,6 +230,32 @@
   transform: scale(0.98);
   box-shadow: none;
 }
+
+.hiddenFileInput {
+  display: none;
+}
+
+.uploadButton {
+  padding: 0.35rem 0.75rem;   /* kleiner */
+  border-radius: 6px;
+  background: linear-gradient(to right, #6366f1, #a855f7);
+  color: white;
+  font-weight: 500;
+  font-size: 0.75rem;        /* kleiner tekst */
+  cursor: pointer;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.uploadButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+
 
 .importInfo {
   margin-top: 0.75rem;
