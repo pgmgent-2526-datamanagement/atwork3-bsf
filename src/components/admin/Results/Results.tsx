@@ -170,7 +170,7 @@ export default function Results() {
           }`}
         >
           <Building2 className={styles.tabIcon} />
-          Event Hall
+          Zaal
         </Button>
 
         <Button
