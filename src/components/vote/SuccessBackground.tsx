@@ -9,9 +9,9 @@ export function SuccessBackground() {
       className={styles["success-page__background"]}
       animate={{
         background: [
-          "radial-gradient(circle at 50% 50%, #ff00ff 0%, transparent 70%), radial-gradient(circle at 30% 80%, #00ffff 0%, transparent 60%), radial-gradient(circle at 70% 20%, #ffff00 0%, transparent 60%)",
-          "radial-gradient(circle at 50% 50%, #00ffff 0%, transparent 70%), radial-gradient(circle at 70% 80%, #ff00ff 0%, transparent 60%), radial-gradient(circle at 30% 20%, #ffff00 0%, transparent 60%)",
-          "radial-gradient(circle at 50% 50%, #ff00ff 0%, transparent 70%), radial-gradient(circle at 30% 80%, #00ffff 0%, transparent 60%), radial-gradient(circle at 70% 20%, #ffff00 0%, transparent 60%)",
+          "radial-gradient(circle at 25% 35%, rgba(99,102,241,0.35) 0%, transparent 60%), radial-gradient(circle at 75% 65%, rgba(236,72,153,0.3) 0%, transparent 60%)",
+          "radial-gradient(circle at 75% 35%, rgba(99,102,241,0.35) 0%, transparent 60%), radial-gradient(circle at 25% 65%, rgba(236,72,153,0.3) 0%, transparent 60%)",
+          "radial-gradient(circle at 25% 35%, rgba(99,102,241,0.35) 0%, transparent 60%), radial-gradient(circle at 75% 65%, rgba(236,72,153,0.3) 0%, transparent 60%)",
         ],
       }}
       transition={{
