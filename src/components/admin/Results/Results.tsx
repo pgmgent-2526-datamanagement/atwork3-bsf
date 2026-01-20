@@ -31,7 +31,8 @@ export default function Results() {
 
     const load = async () => {
       try {
-        setError(null);
+        setError(null); 
+        
 
         const res = await fetch("/api/votes/results/combined", {
           cache: "no-store",
