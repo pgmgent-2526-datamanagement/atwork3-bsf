@@ -62,7 +62,7 @@
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
 
   display: grid;
-  grid-template-columns: 52px 1fr auto;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
 
@@ -324,7 +324,7 @@
   }
 
   .voting-page__film-card {
-    grid-template-columns: 46px 1fr auto;
+    grid-template-columns: 46px minmax(0, 1fr) auto;
     padding: 10px 12px;
     border-radius: 14px;
   }
@@ -338,8 +338,8 @@
   .voting-page__film-title {
     white-space: normal;
     display: -webkit-box;
-    line-clamp: 3;
-    -webkit-line-clamp: 3;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
