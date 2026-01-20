@@ -203,8 +203,8 @@ export const voteService = {
         filmId: f.id,
         title: f.title,
         votes,
-        zaalCount,
-        onlineCount,
+        votesEventHall: zaalCount,
+        votesHome: onlineCount,
         total: votes,
         percentage: 0,
       };

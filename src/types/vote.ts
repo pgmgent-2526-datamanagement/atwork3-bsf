@@ -49,8 +49,8 @@ export interface AdminCombinedResult {
   filmId: number;
   title: string;
   votes: number;
-  zaalCount: number;
-  onlineCount: number;
+  votesEventHall: number;
+  votesHome: number;
   total: number;
   percentage: number;
 }
