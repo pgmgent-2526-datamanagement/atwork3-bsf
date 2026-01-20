@@ -343,8 +343,4 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-
-  .voting-page__film-tagline {
-    display: none; /* op mobile weg voor rust */
-  }
 }
