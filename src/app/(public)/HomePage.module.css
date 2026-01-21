@@ -84,6 +84,7 @@
   font-size: 1.8rem;
   line-height: 1.2;
   color: #ffffff;
+  
 }
 
 .homepage__start-button {
@@ -115,7 +116,7 @@
 
 .homepage__subtitle {
   margin-top: 2rem;
-  color: #9ca3af;
+  color: #f5fbfb;
   font-size: 0.95rem;
 }
 

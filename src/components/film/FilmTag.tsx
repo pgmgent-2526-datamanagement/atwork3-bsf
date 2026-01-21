@@ -19,7 +19,7 @@ export function FilmTag({ film }: FilmTagProps) {
       <p className={styles["success-page__film-label"]}>Je hebt gestemd op</p>
 
       {film.image_url && (
-        <div style={{ position: "relative", width: 120, height: 120, margin: "10px auto", borderRadius: 16, overflow: "hidden" }}>
+        <div style={{ position: "relative", width: 140, objectFit: "cover", height: 160, margin: "10px auto", borderRadius: 16, overflow: "hidden" }}>
           <Image
             src={film.image_url}
             alt={film.title}

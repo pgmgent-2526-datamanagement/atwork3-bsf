@@ -84,7 +84,7 @@
 
 .success-page__film-label {
   margin: 0 0 0.75rem;
-  background-image: linear-gradient(to right, #7b2ff7, #f107a3, #00eaff);
+  background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -131,14 +131,14 @@
 .success-page__sparkle-icon--cyan {
   width: 2rem;
   height: 2rem;
-  color: #eeee22;
+  color: #d622ee;
 }
 
 .success-page__heart-icon {
   width: 2rem;
   height: 2rem;
-  color: #c4b5fd;
-  fill: #c4b5fd;
+  color: #ffef0e;
+  fill: #ffef0e;
 }
 
 /* Subtitle */
@@ -150,4 +150,13 @@
   -webkit-background-clip: text;
   color: transparent;
   font-size: 0.95rem;
+}
+
+.results-modal-hero {
+  position: relative;
+  width: 180px;      /* groter */
+  height: 180px;     /* groter */
+  margin: 10px auto;
+  border-radius: 1.25rem;
+  overflow: hidden;
 }
