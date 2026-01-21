@@ -39,7 +39,6 @@ export default function AdminQRPage() {
             description="Scan om te stemmen"
             imageSrc={`/qr/${s.type}.png`}
             endTime={s.end_time}
-            
           />
           <CountdownRing endTime={s.end_time} />
         </div>

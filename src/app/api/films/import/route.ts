@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     if (!(file instanceof File)) {
       return Response.json(
         { success: false, error: "No file uploaded" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     if (!name.endsWith(".csv")) {
       return Response.json(
         { success: false, error: "Alleen .csv import wordt ondersteund." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     if (editionErr) {
       return Response.json(
         { success: false, error: editionErr.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
           error:
             "Geen actieve editie gevonden. Zet eerst een editie op actief.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
     if (parsed.errors.length) {
       return Response.json(
         { success: false, error: parsed.errors[0].message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
     if (!rows.length) {
       return Response.json(
         { success: false, error: "CSV bevat geen rijen." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
 
       if (!title || !maker || !image_text) {
         throw new Error(
-          `Rij ${idx + 2}: CSV moet kolommen bevatten: title,maker,image_text (en optioneel tagline,thumbnail_url,image_url)`
+          `Rij ${idx + 2}: CSV moet kolommen bevatten: title,maker,image_text (en optioneel tagline,thumbnail_url,image_url)`,
         );
       }
 
@@ -123,7 +123,7 @@ export async function POST(req: Request) {
     if (insertErr) {
       return Response.json(
         { success: false, error: insertErr.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -137,24 +137,24 @@ export async function POST(req: Request) {
       if (err.message === "UNAUTHORIZED") {
         return Response.json(
           { success: false, error: "Not authenticated" },
-          { status: 401 }
+          { status: 401 },
         );
       }
       if (err.message === "FORBIDDEN") {
         return Response.json(
           { success: false, error: "Admin access required" },
-          { status: 403 }
+          { status: 403 },
         );
       }
       return Response.json(
         { success: false, error: err.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return Response.json(
       { success: false, error: "Unexpected server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

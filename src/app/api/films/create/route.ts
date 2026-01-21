@@ -7,9 +7,8 @@ const BUCKET = "film-images";
 export async function POST(req: Request) {
   try {
     const { supabase } = await requireAdmin();
-    
 
-    // ✅ multipart/form-data (voor file uploads)
+    // multipart/form-data (voor file uploads)
     const formData = await req.formData();
 
     const title = (formData.get("title") || "").toString().trim();
@@ -20,25 +19,25 @@ export async function POST(req: Request) {
     if (!title || !tagline || !maker) {
       return NextResponse.json(
         { success: false, error: "Missing fields: title/tagline/maker" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!(image instanceof File)) {
       return NextResponse.json(
         { success: false, error: "Image file is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!image.type.startsWith("image/")) {
       return NextResponse.json(
         { success: false, error: "File must be an image" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // ✅ uniek bestandspad in bucket
+    // uniek bestandspad in bucket
     const ext = image.name.split(".").pop()?.toLowerCase() || "jpg";
     const fileName =
       typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -58,11 +57,11 @@ export async function POST(req: Request) {
     if (uploadError) {
       return NextResponse.json(
         { success: false, error: uploadError.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // ✅ film record opslaan met image_path
+    // film record opslaan met image_path
     const film = await filmService.createFilm(supabase, {
       title,
       tagline,
@@ -76,26 +75,26 @@ export async function POST(req: Request) {
       if (err.message === "UNAUTHORIZED") {
         return NextResponse.json(
           { success: false, error: "Not authenticated" },
-          { status: 401 }
+          { status: 401 },
         );
       }
 
       if (err.message === "FORBIDDEN") {
         return NextResponse.json(
           { success: false, error: "Admin access required" },
-          { status: 403 }
+          { status: 403 },
         );
       }
 
       return NextResponse.json(
         { success: false, error: err.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return NextResponse.json(
       { success: false, error: "Unexpected server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

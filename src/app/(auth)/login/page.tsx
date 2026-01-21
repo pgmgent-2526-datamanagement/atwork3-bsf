@@ -65,7 +65,7 @@ export default function SignInPage() {
       <p className={styles.redirect}>
         Don&apos;t have an account?{" "}
         <a href="/register" className={styles.link}>
-         Register
+          Register
         </a>
       </p>
     </div>
