@@ -1,4 +1,3 @@
-// src/helpers/voteHelpersClient.ts
 export async function getOrCreateDeviceHash(): Promise<string> {
   const key = "device_hash_v1";
   const existing = localStorage.getItem(key);
