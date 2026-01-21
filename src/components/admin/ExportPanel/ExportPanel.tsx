@@ -1,7 +1,7 @@
 "use client";
 
 import Papa, { ParseResult } from "papaparse";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Calendar, Download, FileSpreadsheet, Upload } from "lucide-react";
 
 import styles from "./ExportPanel.module.css";
@@ -10,19 +10,13 @@ import { Button } from "@/components/ui/Button";
 type CsvRow = {
   title?: string;
   maker?: string;
-  image_text?: string;
   tagline?: string;
-  thumbnail_url?: string;
-  image_url?: string;
 };
 
 type PreviewRow = {
   title: string;
   maker: string;
-  image_text: string;
   tagline: string | null;
-  thumbnail_url: string | null;
-  image_url: string | null;
 };
 
 type ImportResponse =
@@ -44,21 +38,18 @@ export default function ExportPanel() {
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const preview: PreviewRow[] = useMemo(() => {
     return rawRows.map((r) => {
       const title = clean(r.title);
       const maker = clean(r.maker);
-      const image_text = clean(r.image_text);
       const tagline = clean(r.tagline);
 
       return {
         title,
         maker,
-        image_text,
         tagline: tagline || null,
-        thumbnail_url: r.thumbnail_url ? clean(r.thumbnail_url) : null,
-        image_url: r.image_url ? clean(r.image_url) : null,
       };
     });
   }, [rawRows]);
@@ -68,9 +59,18 @@ export default function ExportPanel() {
   const validatePreview = () => {
     for (let i = 0; i < preview.length; i++) {
       const row = preview[i];
-      if (!row.title || !row.maker || !row.image_text) {
-        throw new Error(`Rij ${i + 2}: ontbreekt title, maker of image_text.`);
+      if (!row.title || !row.maker) {
+        throw new Error(`Rij ${i + 2}: ontbreekt title, maker.`);
       }
+    }
+  };
+  const resetImport = () => {
+    setFile(null);
+    setRawRows([]);
+    setError("");
+    setInfo("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -79,7 +79,6 @@ export default function ExportPanel() {
     setInfo("");
     setRawRows([]);
     setFile(f);
-
     if (!f) return;
 
     if (!f.name.toLowerCase().endsWith(".csv")) {
@@ -95,6 +94,16 @@ export default function ExportPanel() {
       transformHeader: (h: string) => h.trim(),
       transform: (v: string) => v.trim(),
     });
+    
+    const allowed = new Set(["title", "maker", "tagline"]);
+    const headers = parsed.meta.fields ?? [];
+    const unknown = headers.filter((h) => !allowed.has(h));
+    if (unknown.length) {
+      setError(
+        `Onbekende kolommen: ${unknown.join(", ")}. Alleen title, maker, tagline.`,
+      );
+      return;
+    }
 
     if (parsed.errors.length) {
       setError(parsed.errors[0].message);
@@ -109,7 +118,7 @@ export default function ExportPanel() {
 
     setRawRows(rows);
     setInfo(
-      `Preview geladen: ${rows.length} rij(en). Vereist: title, maker, image_text`,
+      `Preview geladen: ${rows.length} rij(en). Vereist: title, maker, tagline`,
     );
   };
 
@@ -185,21 +194,30 @@ export default function ExportPanel() {
             <label className={styles.uploadButton}>
               <Upload size={16} /> Kies CSV bestand
               <input
+                ref={fileInputRef}
                 type="file"
                 accept=".csv"
                 className={styles.hiddenFileInput}
                 onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
               />
             </label>
-
-            <Button
-              className={styles.importPrimaryButton}
-              onClick={doImport}
-              disabled={!file || !rawRows.length || isImporting}
-            >
-              <Upload size={16} />
-              {isImporting ? "Importeren..." : "Importeer films"}
-            </Button>
+            <div className={styles.importActionButtons}>
+              <Button
+                className={styles.importPrimaryButton}
+                onClick={doImport}
+                disabled={!file || !rawRows.length || isImporting}
+              >
+                <Upload size={16} />
+                {isImporting ? "Importeren..." : "Importeer films"}
+              </Button>
+              <Button
+                className={styles.importSecondaryButton}
+                onClick={resetImport}
+                disabled={!file && !rawRows.length}
+              >
+                Annuleren
+              </Button>
+            </div>
           </div>
 
           {error && <p className={styles.importError}>{error}</p>}
@@ -212,7 +230,6 @@ export default function ExportPanel() {
                   <tr>
                     <th>title</th>
                     <th>maker</th>
-                    <th>image_text</th>
                     <th>tagline</th>
                   </tr>
                 </thead>
@@ -221,7 +238,6 @@ export default function ExportPanel() {
                     <tr key={i}>
                       <td>{r.title}</td>
                       <td>{r.maker}</td>
-                      <td>{r.image_text}</td>
                       <td>{r.tagline ?? ""}</td>
                     </tr>
                   ))}
