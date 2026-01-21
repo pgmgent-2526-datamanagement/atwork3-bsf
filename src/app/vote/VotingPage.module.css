@@ -364,3 +364,72 @@
     overflow: hidden;
   }
 }
+
+/* HERO IMAGE */
+.voting-page__modal-hero {
+  position: relative;
+  height: 220px;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+/* dark gradient */
+.voting-page__modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9),
+    rgba(0, 0, 0, 0.25),
+    transparent
+  );
+}
+
+/* title on image */
+.voting-page__modal-heroText {
+  position: absolute;
+  bottom: 14px;
+  left: 16px;
+  right: 16px;
+}
+/* Bigger modal */
+.voting-page__modal-wrapper {
+  max-width: 30rem; /* was 26rem */
+}
+
+/* More padding */
+.voting-page__modal {
+  padding: 2.4rem;
+}
+
+/* Push hero down because of icon */
+.voting-page__modal-hero {
+  margin-top: 1.2rem;
+  height: 260px; /* bigger image */
+}
+
+.voting-page__modal-heroText h2 {
+  margin: 0;
+  font-family: "Forum", serif;
+  font-size: 1.3rem;
+}
+
+.voting-page__modal-heroText p {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* BODY */
+.voting-page__modal-body {
+  padding: 0 0.25rem;
+}
+
+.voting-page__modal-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.85;
+  max-height: 110px;
+  overflow-y: auto;
+}
