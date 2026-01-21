@@ -87,6 +87,7 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
           title: form.title,
           maker: form.maker || null,
           tagline: form.tagline || null,
+          image: form.image || undefined,
         });
 
         setFilms((prev) =>
@@ -185,6 +186,7 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
         ) : (
           films.map((film) => {
             const v = voteMap.get(film.id);
+            console.log("voteMap item", film.id, v);
 
             return (
               <article key={film.id} className={styles.card}>
@@ -201,7 +203,7 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
                     ) : (
                       <>
                         {v?.votes ?? 0} stemmen totaal (zaal:{" "}
-                        {v?.zaalCount ?? 0} / online: {v?.onlineCount ?? 0})
+                        {v?.votesEventHall ?? 0} / thuis: {v?.votesHome ?? 0})
                       </>
                     )}
                   </p>
