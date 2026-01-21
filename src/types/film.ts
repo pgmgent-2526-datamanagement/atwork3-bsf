@@ -42,14 +42,13 @@ export interface UpdateFilmInput {
   maker?: string | null;
   tagline?: string | null;
   edition_id?: number | null;
-  number?: number;
 
   // Option B paths
   image_path?: string | null;
   thumbnail_path?: string | null;
 
   // legacy (optional)
-  image?: File | null;
+  image?: File;
   thumbnail_url?: string | null;
 }
 
@@ -76,6 +75,20 @@ export interface VoteExportRow {
   total: number;
 }
 
+export interface FilmVoteResult {
+  filmId: number;
+  title: string;
+  votes: number;
+  votesEventHall: number;
+  votesHome: number;
+  percentage: number;
+}
+
+export type CombinedApiResponse =
+  | { success: true; results: FilmVoteResult[] }
+  | { success: false; error: string };
+
+
 export type Film = FilmRow & {
   votesTotal?: number | null;
   imageUrl?: string | null;
@@ -91,3 +104,6 @@ export type FilmsResponse = {
 export type CreateFilmResponse =
   | { success: true; film: Film }
   | { success: false; error: string };
+
+
+  
