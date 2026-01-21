@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     if (!email || !password) {
       return NextResponse.json(
         { error: "Email and password required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,21 +25,18 @@ export async function POST(req: Request) {
       if (err.message === "INVALID_CREDENTIALS") {
         return NextResponse.json(
           { error: "Invalid credentials" },
-          { status: 401 }
+          { status: 401 },
         );
       }
 
       if (err.message === "FORBIDDEN") {
         return NextResponse.json(
           { error: "You are not an admin" },
-          { status: 403 }
+          { status: 403 },
         );
       }
     }
 
-    return NextResponse.json(
-      { error: "Login failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }

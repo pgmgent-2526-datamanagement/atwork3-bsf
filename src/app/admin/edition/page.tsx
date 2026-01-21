@@ -10,9 +10,7 @@ export default async function AdminEditionPage() {
   const { supabase } = await requireAdmin();
   const { edition, films } = await fetchCurrentEditionWithFilms(supabase);
 
-  const subtitle = edition
-    ? `${edition.name} (${edition.year})`
-    : "Geen actieve editie";
+  const subtitle = edition ? edition.name : "Geen actieve editie";
 
   return (
     <div style={{ padding: 24 }}>
@@ -24,7 +22,7 @@ export default async function AdminEditionPage() {
           <div>
             <div className={styles.label}>Actieve editie</div>
             <div className={styles.value}>
-              {edition ? `${edition.name} — ${edition.year}` : "Geen"}
+              {edition ? edition.name : "Geen"}
             </div>
             <div className={styles.muted}>
               Films in editie: <b>{films.length}</b>

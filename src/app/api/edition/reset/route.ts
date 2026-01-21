@@ -100,23 +100,23 @@ export async function POST() {
       if (err.message === "UNAUTHORIZED") {
         return NextResponse.json(
           { success: false, error: "Not authenticated" },
-          { status: 401 }
+          { status: 401 },
         );
       }
       if (err.message === "FORBIDDEN") {
         return NextResponse.json(
           { success: false, error: "Admin access required" },
-          { status: 403 }
+          { status: 403 },
         );
       }
       return NextResponse.json(
         { success: false, error: err.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
     return NextResponse.json(
       { success: false, error: "Unexpected server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

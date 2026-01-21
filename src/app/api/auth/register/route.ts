@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     if (!email || !password || !first_name || !last_name) {
       return NextResponse.json(
         { error: "All fields required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       email,
       password,
       first_name,
-      last_name
+      last_name,
     );
 
     return NextResponse.json({
@@ -28,15 +28,9 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     if (err instanceof Error) {
-      return NextResponse.json(
-        { error: err.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: err.message }, { status: 400 });
     }
 
-    return NextResponse.json(
-      { error: "Registration failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
   }
 }

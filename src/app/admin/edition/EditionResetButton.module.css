@@ -1,24 +1,40 @@
 .resetButton {
-  padding: 10px 14px;
+  padding: 10px 16px;
   border-radius: 10px;
   font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(234, 6, 6, 0.467);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+
+  background: linear-gradient(
+    to right,
+    rgba(239, 68, 68, 0.85),
+    rgba(220, 38, 38, 0.85)
+  );
+
   cursor: pointer;
-  color: white;
-  transition: all 0.15s ease;
+  color: #fff;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
 .resetButton:hover:not(:disabled) {
-  background: rgba(249, 5, 5, 0.696);
+  background: linear-gradient(
+    to right,
+    rgba(248, 113, 113, 0.95),
+    rgba(220, 38, 38, 0.95)
+  );
+
   transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.35);
 }
 
 .resetButton:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: none;
 }
 
 .resetButton:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }

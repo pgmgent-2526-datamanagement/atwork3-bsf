@@ -249,7 +249,7 @@ export default function VotingControl() {
       <ConfirmModal
         open={confirmOpenAllOpen}
         title="Weet je het zeker?"
-        message="Weet je het zeker? Dit zal alle stemmen verwijderen uit de resultaten en een nieuwe stemsessie starten."
+        message="Weet je het zeker? Dit zal alle stemmen verwijderen uit de resultaten pagina en een nieuwe stemsessie starten dus exporteer je resultaten als je dat nog niet gedaan hebt."
         confirmText="Ja, doorgaan"
         cancelText="Annuleren"
         danger

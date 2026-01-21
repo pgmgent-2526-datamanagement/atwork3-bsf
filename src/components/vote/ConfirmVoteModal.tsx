@@ -12,13 +12,19 @@ interface ConfirmVoteModalProps {
   onCancel: () => void;
 }
 
-export function ConfirmVoteModal({ film, open, onConfirm, onCancel }: ConfirmVoteModalProps) {
+export function ConfirmVoteModal({
+  film,
+  open,
+  onConfirm,
+  onCancel,
+}: ConfirmVoteModalProps) {
   if (!film) return null;
 
   return (
     <AnimatePresence>
       {open && (
         <>
+          {/* BACKDROP */}
           <motion.div
             className={styles["voting-page__modal-backdrop"]}
             initial={{ opacity: 0 }}
@@ -27,14 +33,16 @@ export function ConfirmVoteModal({ film, open, onConfirm, onCancel }: ConfirmVot
             onClick={onCancel}
           />
 
+          {/* MODAL */}
           <motion.div
             className={styles["voting-page__modal-wrapper"]}
-            initial={{ opacity: 0, scale: 0.9, y: "-40%" }}
+            initial={{ opacity: 0, scale: 0.92, y: "-40%" }}
             animate={{ opacity: 1, scale: 1, y: "-50%" }}
-            exit={{ opacity: 0, scale: 0.9, y: "-40%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            exit={{ opacity: 0, scale: 0.92, y: "-40%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 280 }}
           >
             <div className={styles["voting-page__modal"]}>
+              {/* CHECK ICON (BACK ON TOP) */}
               <motion.div
                 className={styles["voting-page__modal-icon-wrapper"]}
                 initial={{ scale: 0 }}
@@ -46,54 +54,53 @@ export function ConfirmVoteModal({ film, open, onConfirm, onCancel }: ConfirmVot
                 </div>
               </motion.div>
 
-              <h3 className={styles["voting-page__modal-title"]}>Bevestig je stem</h3>
-
+              {/* HERO IMAGE */}
               {film.image_url && (
-                <div
-                  style={{
-                    position: "relative",
-                    width: 96,
-                    height: 96,
-                    margin: "8px auto",
-                    borderRadius: 12,
-                    overflow: "hidden",
-                  }}
-                >
+                <div className={styles["voting-page__modal-hero"]}>
                   <Image
                     src={film.image_url}
                     alt={film.title}
                     fill
-                    sizes="96px"
+                    priority
                     style={{ objectFit: "cover" }}
                   />
+
+                  <div className={styles["voting-page__modal-overlay"]} />
+
+                  <div className={styles["voting-page__modal-heroText"]}>
+                    <h2>{film.title}</h2>
+                    {film.maker && <p>Door {film.maker}</p>}
+                  </div>
                 </div>
               )}
 
-              <p className={styles["voting-page__modal-text"]}>
-                Je stemt op <strong>{film.title}</strong>
-              </p>
+              {/* BODY */}
+              <div className={styles["voting-page__modal-body"]}>
+                <p className={styles["voting-page__modal-description"]}>
+                  {film.tagline}
+                </p>
+              </div>
 
+              {/* ACTIONS */}
               <div className={styles["voting-page__modal-actions"]}>
                 <motion.button
-                  type="button"
                   onClick={onCancel}
                   className={styles["voting-page__modal-button--secondary"]}
                   whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.97 }}
                 >
                   <X className={styles["voting-page__modal-button-icon"]} />
-                  <span>Annuleer</span>
+                  Annuleer
                 </motion.button>
 
                 <motion.button
-                  type="button"
                   onClick={onConfirm}
                   className={styles["voting-page__modal-button--primary"]}
                   whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.97 }}
                 >
                   <Check className={styles["voting-page__modal-button-icon"]} />
-                  <span>Bevestig</span>
+                  Bevestig
                 </motion.button>
               </div>
             </div>

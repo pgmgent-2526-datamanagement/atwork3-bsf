@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/Toast";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import styles from "./EditionResetButton.module.css";
 
 type EditionRow = {
@@ -22,29 +23,24 @@ export default function EditionResetButton({
 }) {
   const toast = useToast();
   const router = useRouter();
-  const [busy, setBusy] = useState(false);
-  const resetArmedUntilRef = useRef<number>(0);
 
-  const onReset = async () => {
+  const [busy, setBusy] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const openConfirm = () => {
+    if (!edition || busy) return;
+    setConfirmOpen(true);
+  };
+
+  const closeConfirm = () => {
+    if (busy) return; // prevent closing while request is running
+    setConfirmOpen(false);
+  };
+
+  const doReset = async () => {
     if (!edition || busy) return;
 
-    const now = Date.now();
-
-    // First click → arm
-    if (now > resetArmedUntilRef.current) {
-      resetArmedUntilRef.current = now + 6000;
-
-      toast.info(
-        `Klik binnen 6 seconden nogmaals op "Reset" om "${edition.name} (${edition.year})" te wissen.`,
-        "Bevestiging nodig",
-      );
-      return;
-    }
-
-    // Second click → execute
-    resetArmedUntilRef.current = 0;
     setBusy(true);
-
     try {
       const res = await fetch("/api/edition/reset", {
         method: "POST",
@@ -54,15 +50,11 @@ export default function EditionResetButton({
       const text = await res.text();
       const json = text ? (JSON.parse(text) as ResetResponse) : null;
 
-      if (!res.ok || !json) {
-        throw new Error("Reset failed");
-      }
-
-      if (!json.success) {
-        throw new Error(json.error);
-      }
+      if (!res.ok || !json) throw new Error("Reset failed");
+      if (!json.success) throw new Error(json.error);
 
       toast.success("Editie succesvol gereset", "Gelukt");
+      setConfirmOpen(false);
       router.refresh();
     } catch (e) {
       toast.error(
@@ -74,13 +66,30 @@ export default function EditionResetButton({
     }
   };
 
+  const editionLabel = edition ? edition.name : "deze editie";
+
   return (
-    <button
-      className={styles.resetButton}
-      disabled={!edition || busy}
-      onClick={onReset}
-    >
-      {busy ? "Bezig..." : "Reset editie (alles wissen + nieuwe editie)"}
-    </button>
+    <>
+      <button
+        className={styles.resetButton}
+        disabled={!edition || busy}
+        onClick={openConfirm}
+        type="button"
+      >
+        {busy ? "Bezig..." : "Reset editie (alles wissen + nieuwe editie)"}
+      </button>
+
+      <ConfirmModal
+        open={confirmOpen}
+        title="Editie resetten?"
+        message={`Ben je zeker dat je "${editionLabel}" wil resetten? Dit wist alle stemmen/resultaten van de huidige editie en start een nieuwe editie.`}
+        confirmText="Ja, reset"
+        cancelText="Annuleer"
+        danger
+        busy={busy}
+        onCancel={closeConfirm}
+        onConfirm={doReset}
+      />
+    </>
   );
 }
