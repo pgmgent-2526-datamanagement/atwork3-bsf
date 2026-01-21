@@ -186,7 +186,6 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
         ) : (
           films.map((film) => {
             const v = voteMap.get(film.id);
-            console.log("voteMap item", film.id, v);
 
             return (
               <article key={film.id} className={styles.card}>
