@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Film, Settings, BarChart3, Download, QrCode } from "lucide-react";
+import { Film, Settings, BarChart3, Download, QrCode, RotateCcw } from "lucide-react";
 import styles from "./Dashboard.module.css";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
@@ -43,7 +43,7 @@ export default function AdminLayout({
         </Link>
 
         <Link href="/admin/edition" className={styles.navButton}>
-          <Download size={18} /> Reset
+          <RotateCcw size={18} /> Reset
         </Link>
       </nav>
 
