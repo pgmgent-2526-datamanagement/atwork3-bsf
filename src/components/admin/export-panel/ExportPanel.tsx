@@ -1,11 +1,19 @@
 "use client";
 
 import Papa, { ParseResult } from "papaparse";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Calendar, Download, FileSpreadsheet, Upload } from "lucide-react";
 
 import styles from "./ExportPanel.module.css";
 import { Button } from "@/components/ui/Button";
+import {
+  addExportHistoryItem,
+  formatExportHistoryDate,
+  getExportHistory,
+  clearExportHistory,
+  subscribeExportHistoryUpdated,
+  type ExportHistoryItem,
+} from "@/lib/exportHistory";
 
 type CsvRow = {
   title?: string;
@@ -29,7 +37,15 @@ function clean(value: unknown): string {
 
 export default function ExportPanel() {
   const handleExport = () => {
-    window.location.href = "/api/films/export";
+    const exportUrl = "/api/films/export";
+
+    addExportHistoryItem({
+      format: "Excel",
+      url: exportUrl,
+      maxItems: 20,
+    });
+
+    window.location.href = exportUrl;
   };
 
   // --- IMPORT STATE ---
@@ -37,6 +53,7 @@ export default function ExportPanel() {
   const [rawRows, setRawRows] = useState<CsvRow[]>([]);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+  const [history, setHistory] = useState<ExportHistoryItem[]>([]);
   const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,6 +70,16 @@ export default function ExportPanel() {
       };
     });
   }, [rawRows]);
+
+  useEffect(() => {
+    setHistory(getExportHistory());
+
+    const unsub = subscribeExportHistoryUpdated(() => {
+      setHistory(getExportHistory());
+    });
+
+    return unsub;
+  }, []);
 
   const previewTop = useMemo(() => preview.slice(0, 10), [preview]);
 
@@ -94,7 +121,7 @@ export default function ExportPanel() {
       transformHeader: (h: string) => h.trim(),
       transform: (v: string) => v.trim(),
     });
-    
+
     const allowed = new Set(["title", "maker", "tagline"]);
     const headers = parsed.meta.fields ?? [];
     const unknown = headers.filter((h) => !allowed.has(h));
@@ -168,7 +195,7 @@ export default function ExportPanel() {
       {/* Export + Import cards next to each other */}
       <div className={styles.exportGrid}>
         {/* Excel Export Card */}
-        <article className={styles.exportButton} onClick={handleExport}>
+        <article className={styles.exportButton}>
           <FileSpreadsheet
             className={`${styles.exportIcon} ${styles.exportIconGreen}`}
           />
@@ -249,32 +276,45 @@ export default function ExportPanel() {
       </div>
 
       <div>
-        <h3 className={styles.optionsTitle}>Export Geschiedenis</h3>
+        <div className={styles.historyContainer}>
+          <header className={styles.historyList}>
+            <h3 className={styles.optionsTitle}>Export Geschiedenis</h3>
+            <Button
+              className={styles.importSecondaryButton}
+              onClick={() => clearExportHistory()}
+              disabled={!history.length}
+            >
+              Wis alle exports
+            </Button>
+          </header>
 
-        <div className={styles.historyList}>
-          {[
-            { date: "2025-11-20 14:30", format: "Excel" },
-            { date: "2025-11-19 16:45", format: "Excel" },
-          ].map((item, i) => (
-            <div key={i} className={styles.historyItem}>
-              <div className={styles.historyItemLeft}>
-                <Calendar className={styles.historyIcon} />
-                <div>
-                  <p className={styles.historyFormat}>{item.format} Export</p>
-                  <p className={styles.historyDate}>{item.date}</p>
+          {!history.length ? (
+            <p className={styles.subtext}>Nog geen exports gedaan.</p>
+          ) : (
+            history.map((item) => (
+              <div key={item.id} className={styles.historyItem}>
+                <div className={styles.historyItemLeft}>
+                  <Calendar className={styles.historyIcon} />
+                  <div>
+                    <p className={styles.historyFormat}>{item.format} Export</p>
+                    <p className={styles.historyDate}>
+                      {formatExportHistoryDate(item.dateIso)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className={styles.historyItemRight}>
+                  <Button
+                    className={styles.historyDownload}
+                    onClick={() => (window.location.href = item.url)}
+                    title="Opnieuw downloaden"
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
-
-              <div className={styles.historyItemRight}>
-                <Button
-                  className={styles.historyDownload}
-                  onClick={handleExport}
-                >
-                  <Download className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
