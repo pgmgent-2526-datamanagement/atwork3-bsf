@@ -14,12 +14,42 @@ export async function getFilms(): Promise<Film[]> {
   return json.films;
 }
 
+function isFile(v: unknown): v is File {
+  return typeof File !== "undefined" && v instanceof File;
+}
+function asString(v: unknown, fallback = ""): string {
+  return typeof v === "string" ? v : fallback;
+}
+
 export async function updateFilm(input: UpdateFilmInput): Promise<Film> {
-  const res = await fetch("/api/films/update", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
+  let res: Response;
+
+  if (isFile(input.image)) {
+    const fd = new FormData();
+    fd.append("id", String(input.id));
+    fd.append("title", asString(input.title));
+    fd.append("maker", asString(input.maker ?? ""));
+    fd.append("tagline", asString(input.tagline ?? ""));
+    fd.append("image", input.image); // <-- nu zeker File
+
+    res = await fetch("/api/films/update", {
+      method: "PUT",
+      body: fd,
+      credentials: "include",
+    });
+  } else {
+    res = await fetch("/api/films/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: input.id,
+        title: input.title,
+        maker: input.maker,
+        tagline: input.tagline,
+      }),
+      credentials: "include",
+    });
+  }
 
   const json = (await res.json()) as ApiOk<{ film: Film }> | ApiErr;
 
@@ -28,6 +58,7 @@ export async function updateFilm(input: UpdateFilmInput): Promise<Film> {
   }
   return json.film;
 }
+
 
 export async function deleteFilm(id: number): Promise<void> {
   const res = await fetch("/api/films/delete", {
