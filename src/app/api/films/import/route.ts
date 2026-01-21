@@ -4,10 +4,8 @@ import { requireAdmin } from "@/lib/adminGuard";
 export const runtime = "nodejs";
 
 type CsvRow = {
-  number?: string;
   title?: string;
   maker?: string;
-  image_text?: string;
   tagline?: string;
   thumbnail_url?: string;
   image_url?: string;
@@ -27,7 +25,7 @@ export async function POST(req: Request) {
     if (!(file instanceof File)) {
       return Response.json(
         { success: false, error: "No file uploaded" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,7 +33,7 @@ export async function POST(req: Request) {
     if (!name.endsWith(".csv")) {
       return Response.json(
         { success: false, error: "Alleen .csv import wordt ondersteund." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -51,7 +49,7 @@ export async function POST(req: Request) {
     if (editionErr) {
       return Response.json(
         { success: false, error: editionErr.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -62,7 +60,7 @@ export async function POST(req: Request) {
           error:
             "Geen actieve editie gevonden. Zet eerst een editie op actief.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -79,7 +77,7 @@ export async function POST(req: Request) {
     if (parsed.errors.length) {
       return Response.json(
         { success: false, error: parsed.errors[0].message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -88,7 +86,7 @@ export async function POST(req: Request) {
     if (!rows.length) {
       return Response.json(
         { success: false, error: "CSV bevat geen rijen." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -97,12 +95,11 @@ export async function POST(req: Request) {
     const films = rows.map((r, idx) => {
       const title = clean(r.title);
       const maker = clean(r.maker);
-      const image_text = clean(r.image_text);
       const tagline = clean(r.tagline);
 
-      if (!title || !maker || !image_text) {
+      if (!title || !maker) {
         throw new Error(
-          `Rij ${idx + 2}: CSV moet kolommen bevatten: title,maker,image_text (en optioneel tagline,thumbnail_url,image_url)`
+          `Rij ${idx + 2}: CSV moet kolommen bevatten: title,maker,tagline (en optioneel tagline,thumbnail_url,image_url)`,
         );
       }
 
@@ -111,7 +108,7 @@ export async function POST(req: Request) {
         title,
         maker,
         // if tagline empty, use image_text as fallback (so you don't lose it)
-        tagline: tagline || image_text || null,
+        tagline: tagline || null,
         thumbnail_url: r.thumbnail_url ? clean(r.thumbnail_url) : null,
         image_url: r.image_url ? clean(r.image_url) : null,
       };
@@ -123,7 +120,7 @@ export async function POST(req: Request) {
     if (insertErr) {
       return Response.json(
         { success: false, error: insertErr.message },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -137,24 +134,24 @@ export async function POST(req: Request) {
       if (err.message === "UNAUTHORIZED") {
         return Response.json(
           { success: false, error: "Not authenticated" },
-          { status: 401 }
+          { status: 401 },
         );
       }
       if (err.message === "FORBIDDEN") {
         return Response.json(
           { success: false, error: "Admin access required" },
-          { status: 403 }
+          { status: 403 },
         );
       }
       return Response.json(
         { success: false, error: err.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     return Response.json(
       { success: false, error: "Unexpected server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
