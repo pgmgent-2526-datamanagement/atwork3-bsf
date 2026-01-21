@@ -1,28 +1,30 @@
 "use client";
 
 import Papa, { ParseResult } from "papaparse";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Calendar, Download, FileSpreadsheet, Upload } from "lucide-react";
 
 import styles from "./ExportPanel.module.css";
 import { Button } from "@/components/ui/Button";
+import {
+  addExportHistoryItem,
+  formatExportHistoryDate,
+  getExportHistory,
+  clearExportHistory,
+  subscribeExportHistoryUpdated,
+  type ExportHistoryItem,
+} from "@/lib/exportHistory";
 
 type CsvRow = {
   title?: string;
   maker?: string;
-  image_text?: string;
   tagline?: string;
-  thumbnail_url?: string;
-  image_url?: string;
 };
 
 type PreviewRow = {
   title: string;
   maker: string;
-  image_text: string;
   tagline: string | null;
-  thumbnail_url: string | null;
-  image_url: string | null;
 };
 
 type ImportResponse =
@@ -35,7 +37,15 @@ function clean(value: unknown): string {
 
 export default function ExportPanel() {
   const handleExport = () => {
-    window.location.href = "/api/films/export";
+    const exportUrl = "/api/films/export";
+
+    addExportHistoryItem({
+      format: "Excel",
+      url: exportUrl,
+      maxItems: 20,
+    });
+
+    window.location.href = exportUrl;
   };
 
   // --- IMPORT STATE ---
@@ -43,34 +53,51 @@ export default function ExportPanel() {
   const [rawRows, setRawRows] = useState<CsvRow[]>([]);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+  const [history, setHistory] = useState<ExportHistoryItem[]>([]);
   const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const preview: PreviewRow[] = useMemo(() => {
     return rawRows.map((r) => {
       const title = clean(r.title);
       const maker = clean(r.maker);
-      const image_text = clean(r.image_text);
       const tagline = clean(r.tagline);
 
       return {
         title,
         maker,
-        image_text,
         tagline: tagline || null,
-        thumbnail_url: r.thumbnail_url ? clean(r.thumbnail_url) : null,
-        image_url: r.image_url ? clean(r.image_url) : null,
       };
     });
   }, [rawRows]);
+
+  useEffect(() => {
+    setHistory(getExportHistory());
+
+    const unsub = subscribeExportHistoryUpdated(() => {
+      setHistory(getExportHistory());
+    });
+
+    return unsub;
+  }, []);
 
   const previewTop = useMemo(() => preview.slice(0, 10), [preview]);
 
   const validatePreview = () => {
     for (let i = 0; i < preview.length; i++) {
       const row = preview[i];
-      if (!row.title || !row.maker || !row.image_text) {
-        throw new Error(`Rij ${i + 2}: ontbreekt title, maker of image_text.`);
+      if (!row.title || !row.maker) {
+        throw new Error(`Rij ${i + 2}: ontbreekt title, maker.`);
       }
+    }
+  };
+  const resetImport = () => {
+    setFile(null);
+    setRawRows([]);
+    setError("");
+    setInfo("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -79,7 +106,6 @@ export default function ExportPanel() {
     setInfo("");
     setRawRows([]);
     setFile(f);
-
     if (!f) return;
 
     if (!f.name.toLowerCase().endsWith(".csv")) {
@@ -96,6 +122,16 @@ export default function ExportPanel() {
       transform: (v: string) => v.trim(),
     });
 
+    const allowed = new Set(["title", "maker", "tagline"]);
+    const headers = parsed.meta.fields ?? [];
+    const unknown = headers.filter((h) => !allowed.has(h));
+    if (unknown.length) {
+      setError(
+        `Onbekende kolommen: ${unknown.join(", ")}. Alleen title, maker, tagline.`,
+      );
+      return;
+    }
+
     if (parsed.errors.length) {
       setError(parsed.errors[0].message);
       return;
@@ -109,7 +145,7 @@ export default function ExportPanel() {
 
     setRawRows(rows);
     setInfo(
-      `Preview geladen: ${rows.length} rij(en). Vereist: title, maker, image_text`,
+      `Preview geladen: ${rows.length} rij(en). Vereist: title, maker, tagline`,
     );
   };
 
@@ -159,7 +195,7 @@ export default function ExportPanel() {
       {/* Export + Import cards next to each other */}
       <div className={styles.exportGrid}>
         {/* Excel Export Card */}
-        <article className={styles.exportButton} onClick={handleExport}>
+        <article className={styles.exportButton}>
           <FileSpreadsheet
             className={`${styles.exportIcon} ${styles.exportIconGreen}`}
           />
@@ -185,21 +221,30 @@ export default function ExportPanel() {
             <label className={styles.uploadButton}>
               <Upload size={16} /> Kies CSV bestand
               <input
+                ref={fileInputRef}
                 type="file"
                 accept=".csv"
                 className={styles.hiddenFileInput}
                 onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
               />
             </label>
-
-            <Button
-              className={styles.importPrimaryButton}
-              onClick={doImport}
-              disabled={!file || !rawRows.length || isImporting}
-            >
-              <Upload size={16} />
-              {isImporting ? "Importeren..." : "Importeer films"}
-            </Button>
+            <div className={styles.importActionButtons}>
+              <Button
+                className={styles.importPrimaryButton}
+                onClick={doImport}
+                disabled={!file || !rawRows.length || isImporting}
+              >
+                <Upload size={16} />
+                {isImporting ? "Importeren..." : "Importeer films"}
+              </Button>
+              <Button
+                className={styles.importSecondaryButton}
+                onClick={resetImport}
+                disabled={!file && !rawRows.length}
+              >
+                Annuleren
+              </Button>
+            </div>
           </div>
 
           {error && <p className={styles.importError}>{error}</p>}
@@ -212,7 +257,6 @@ export default function ExportPanel() {
                   <tr>
                     <th>title</th>
                     <th>maker</th>
-                    <th>image_text</th>
                     <th>tagline</th>
                   </tr>
                 </thead>
@@ -221,7 +265,6 @@ export default function ExportPanel() {
                     <tr key={i}>
                       <td>{r.title}</td>
                       <td>{r.maker}</td>
-                      <td>{r.image_text}</td>
                       <td>{r.tagline ?? ""}</td>
                     </tr>
                   ))}
@@ -233,32 +276,45 @@ export default function ExportPanel() {
       </div>
 
       <div>
-        <h3 className={styles.optionsTitle}>Export Geschiedenis</h3>
+        <div className={styles.historyContainer}>
+          <header className={styles.historyList}>
+            <h3 className={styles.optionsTitle}>Export Geschiedenis</h3>
+            <Button
+              className={styles.importSecondaryButton}
+              onClick={() => clearExportHistory()}
+              disabled={!history.length}
+            >
+              Wis alle exports
+            </Button>
+          </header>
 
-        <div className={styles.historyList}>
-          {[
-            { date: "2025-11-20 14:30", format: "Excel" },
-            { date: "2025-11-19 16:45", format: "Excel" },
-          ].map((item, i) => (
-            <div key={i} className={styles.historyItem}>
-              <div className={styles.historyItemLeft}>
-                <Calendar className={styles.historyIcon} />
-                <div>
-                  <p className={styles.historyFormat}>{item.format} Export</p>
-                  <p className={styles.historyDate}>{item.date}</p>
+          {!history.length ? (
+            <p className={styles.subtext}>Nog geen exports gedaan.</p>
+          ) : (
+            history.map((item) => (
+              <div key={item.id} className={styles.historyItem}>
+                <div className={styles.historyItemLeft}>
+                  <Calendar className={styles.historyIcon} />
+                  <div>
+                    <p className={styles.historyFormat}>{item.format} Export</p>
+                    <p className={styles.historyDate}>
+                      {formatExportHistoryDate(item.dateIso)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className={styles.historyItemRight}>
+                  <Button
+                    className={styles.historyDownload}
+                    onClick={() => (window.location.href = item.url)}
+                    title="Opnieuw downloaden"
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
-
-              <div className={styles.historyItemRight}>
-                <Button
-                  className={styles.historyDownload}
-                  onClick={handleExport}
-                >
-                  <Download className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -19,14 +19,16 @@
   margin-top: 0.75rem;
   display: flex;
   align-items: center;
+  margin: 1.5rem auto;
   gap: 0.4rem;
 
   padding: 0.5rem 0.9rem;
   border-radius: 0.4rem;
   border: none;
+  font-family: "Forum", sans-serif;
 
-  background: #3b82f6;
-  color: white;
+  background: rgb(93%, 93%, 100%);
+  color: rgb(15, 15, 15);
   font-size: 0.85rem;
   font-weight: 600;
 

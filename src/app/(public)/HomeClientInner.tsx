@@ -2,7 +2,7 @@
 
 import { HomePage } from "@/components/home/HomePage";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, Suspense } from "react";
+import { useEffect, useMemo } from "react";
 
 type Mode = "zaal" | "online";
 
@@ -39,9 +39,5 @@ export default function HomeClient() {
     router.push("/admin");
   };
 
-  return (
-    <Suspense>
-      <HomePage onStartVoting={onStartVoting} onAdminLogin={onAdminLogin} />
-    </Suspense>
-  );
+  return <HomePage onStartVoting={onStartVoting} onAdminLogin={onAdminLogin} />;
 }

@@ -145,7 +145,7 @@ export default function Results() {
             <Trophy className={styles.statIcon} />
           </div>
           <div className={styles.statValue}>
-            {sortedTotal[0]?.title?.split(" ")[0] || "N/A"}
+            {sortedTotal[0]?.title || "N/A"}
           </div>
           <p className={styles.statDescription}>
             {sortedTotal[0]?.votes || 0} stemmen (

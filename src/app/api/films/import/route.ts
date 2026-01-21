@@ -4,10 +4,8 @@ import { requireAdmin } from "@/lib/adminGuard";
 export const runtime = "nodejs";
 
 type CsvRow = {
-  number?: string;
   title?: string;
   maker?: string;
-  image_text?: string;
   tagline?: string;
   thumbnail_url?: string;
   image_url?: string;
@@ -97,12 +95,11 @@ export async function POST(req: Request) {
     const films = rows.map((r, idx) => {
       const title = clean(r.title);
       const maker = clean(r.maker);
-      const image_text = clean(r.image_text);
       const tagline = clean(r.tagline);
 
-      if (!title || !maker || !image_text) {
+      if (!title || !maker) {
         throw new Error(
-          `Rij ${idx + 2}: CSV moet kolommen bevatten: title,maker,image_text (en optioneel tagline,thumbnail_url,image_url)`,
+          `Rij ${idx + 2}: CSV moet kolommen bevatten: title,maker,tagline (en optioneel tagline,thumbnail_url,image_url)`,
         );
       }
 
@@ -111,7 +108,7 @@ export async function POST(req: Request) {
         title,
         maker,
         // if tagline empty, use image_text as fallback (so you don't lose it)
-        tagline: tagline || image_text || null,
+        tagline: tagline || null,
         thumbnail_url: r.thumbnail_url ? clean(r.thumbnail_url) : null,
         image_url: r.image_url ? clean(r.image_url) : null,
       };

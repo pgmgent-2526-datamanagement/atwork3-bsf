@@ -1,19 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { FilmVoteResult, CombinedApiResponse } from "@/types/film";
 
-export interface FilmVoteResult {
-  filmId: number;
-  title: string;
-  votes: number;
-  zaalCount: number;
-  onlineCount: number;
-  percentage: number;
-}
-
-type CombinedApiResponse =
-  | { success: true; results: FilmVoteResult[] }
-  | { success: false; error: string };
 
 export function useFilmVoteResults(pollMs = 5000) {
   const [results, setResults] = useState<FilmVoteResult[]>([]);

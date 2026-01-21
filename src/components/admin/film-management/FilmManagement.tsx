@@ -87,6 +87,7 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
           title: form.title,
           maker: form.maker || null,
           tagline: form.tagline || null,
+          image: form.image || undefined,
         });
 
         setFilms((prev) =>
@@ -201,7 +202,7 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
                     ) : (
                       <>
                         {v?.votes ?? 0} stemmen totaal (zaal:{" "}
-                        {v?.zaalCount ?? 0} / online: {v?.onlineCount ?? 0})
+                        {v?.votesEventHall ?? 0} / thuis: {v?.votesHome ?? 0})
                       </>
                     )}
                   </p>

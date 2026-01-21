@@ -42,7 +42,8 @@
 
 .statDescription {
   font-size: 0.75rem;
-  color: #4b5563;
+  color: #060606;
+  font-weight: 600;
   margin-top: 0.25rem;
 }
 
@@ -159,7 +160,8 @@
   display: flex;
   gap: 1rem;
   font-size: 0.75rem;
-  color: #4b5563;
+  color: #010101;
+  font-weight: 600;
 }
 
 .rankingStat {
@@ -175,7 +177,8 @@
 
 .rankingPercentage {
   font-size: 0.75rem;
-  color: #4b5563;
+  color: #0a0a0a;
+  font-weight: 600;
 }
 
 .listItem {
@@ -232,7 +235,8 @@
   align-items: center;
   gap: 0.25rem;
   font-size: 0.875rem;
-  color: #4b5563;
+  color: #030303;
+  font-weight: 600;
 }
 
 .listItemIcon {
@@ -242,7 +246,8 @@
 
 .listItemPercentage {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #141414;
+  font-weight: 600;
 }
 
 /* TAB WRAPPER */

@@ -60,21 +60,60 @@ export const filmService = {
   },
 
   // UPDATE FILM
+  // UPDATE FILM
   async updateFilm(supabase: DB, input: UpdateFilmInput): Promise<FilmRow> {
-    const { id, ...updates } = input;
+    const { id, image, ...updates } = input;
     if (!id) throw new Error("Film id is required");
 
-    const { data, error } = await supabase
+    // 1) update tekstvelden (zonder image)
+    const { data: base, error: e1 } = await supabase
       .from("film")
       .update(updates)
       .eq("id", id)
       .select("*")
       .maybeSingle<FilmDbRow>();
 
-    if (error) throw error;
-    if (!data) throw new Error("Film not found");
+    if (e1) throw e1;
+    if (!base) throw new Error("Film not found");
 
-    return withImageUrl(supabase, data);
+    // 2) als er een nieuwe image is: upload + image_path updaten
+    if (image && image instanceof File && image.size > 0) {
+      if (!image.type.startsWith("image/")) {
+        throw new Error("File must be an image");
+      }
+
+      const ext = image.name.split(".").pop()?.toLowerCase() || "jpg";
+      const fileName =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? `${crypto.randomUUID()}.${ext}`
+          : `${Date.now()}.${ext}`;
+
+      // ✅ zelfde map als POST:
+      const image_path = `films/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET) // "film-images"
+        .upload(image_path, image, {
+          contentType: image.type,
+          upsert: false, // bij update mag dit true zijn
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: withPath, error: e2 } = await supabase
+        .from("film")
+        .update({ image_path })
+        .eq("id", id)
+        .select("*")
+        .maybeSingle<FilmDbRow>();
+
+      if (e2) throw e2;
+      if (!withPath) throw new Error("Film not found after image update");
+
+      return withImageUrl(supabase, withPath);
+    }
+
+    return withImageUrl(supabase, base);
   },
 
   // DELETE FILM
@@ -86,7 +125,7 @@ export const filmService = {
   // IMPORT FILMS → ACTIVE EDITION
   async importFilmsForActiveEdition(
     supabase: DB,
-    films: ImportFilmInput[]
+    films: ImportFilmInput[],
   ): Promise<FilmRow[]> {
     if (!Array.isArray(films) || films.length === 0) {
       throw new Error("Geen films om te importeren.");

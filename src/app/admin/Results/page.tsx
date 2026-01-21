@@ -1,4 +1,4 @@
-import Results from "@/components/admin/results/Results";
+import Results from "@/components/admin/Results/Results";
 
 export default function ResultsPage() {
   return <Results />;

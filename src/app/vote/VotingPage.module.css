@@ -62,9 +62,9 @@
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
 
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) auto;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
 
   padding: 12px 14px;
   cursor: pointer;
@@ -88,9 +88,9 @@
 
 /* FOTO: kleine cirkel met glow ring */
 .voting-page__film-image {
-  width: 52px;
-  height: 52px;
-  border-radius: 999px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
   overflow: hidden;
   background: #0b1020;
   position: relative;
@@ -122,8 +122,9 @@
 .voting-page__film-imageFallback {
   width: 100%;
   height: 100%;
-  display: grid;
-  place-items: center;
+  display: flex;              /* beter dan grid hier */
+  align-items: center;        /* verticaal */
+  justify-content: center;
   color: rgba(255, 255, 255, 0.65);
   font-size: 0.75rem;
 }
