@@ -73,7 +73,6 @@
   width: 100%;
   margin-top: 3rem;
   font-family: "Forum", sans-serif;
-
 }
 
 /******** HISTORY ********/
@@ -141,7 +140,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.9rem .5rem;
+  padding: 0.9rem 0.5rem;
 
   background: linear-gradient(to right, rgb(5, 150, 105), #4d8918);
   color: white;
@@ -196,14 +195,19 @@
   font-family: "Forum", sans-serif;
 }
 
+.importActionButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
 .importPrimaryButton {
-  width: 100%;
+  width: fit-content;
   display: flex;
   justify-content: center;
   font-family: "Forum", sans-serif;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.9rem .5rem;
+  padding: 0.9rem 0.5rem;
 
   background: linear-gradient(to right, #6366f1, #a855f7);
   color: white;
@@ -231,31 +235,62 @@
   box-shadow: none;
 }
 
+.importSecondaryButton {
+  padding: 0.9rem 1.2rem;
+  border-radius: 6px;
+  color: #eff1f3;
+  font-family: "Forum", sans-serif;
+  border: none;
+  font-size: .95rem;
+  font-weight: 600;
+  background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);
+  cursor: pointer;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.importSecondaryButton:hover {
+  background: #d92828;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(109, 40, 217, 0.25);
+}
+
+.importSecondaryButton:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
 .hiddenFileInput {
   display: none;
 }
 
 .uploadButton {
-  padding: 0.35rem 0.75rem;   /* kleiner */
+  padding: 0.35rem 0.75rem; /* kleiner */
   border-radius: 6px;
   background: linear-gradient(to right, #6366f1, #a855f7);
   color: white;
   font-weight: 500;
-  font-size: 0.75rem;        /* kleiner tekst */
+  font-size: 0.75rem; /* kleiner tekst */
   cursor: pointer;
   width: fit-content;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
 .uploadButton:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
 }
-
-
 
 .importInfo {
   margin-top: 0.75rem;
