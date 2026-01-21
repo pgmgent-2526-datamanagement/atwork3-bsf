@@ -1,6 +1,6 @@
 "use client";
 
-import VotingControl from "@/components/admin/VotingControl/VotingControl";
+import VotingControl from "@/components/admin/voting-control/VotingControl";
 
 export default function VotingPage() {
   return <VotingControl />;

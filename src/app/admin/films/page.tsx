@@ -1,4 +1,4 @@
-import { FilmManagement } from "@/components/admin/FilmManagement/FilmManagement";
+import { FilmManagement } from "@/components/admin/film-management/FilmManagement";
 import { requireAdmin } from "@/lib/adminGuard";
 import { filmService } from "@/services/filmService";
 

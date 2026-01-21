@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/adminGuard";
 import { exportService } from "@/helpers/exportService";
-import { makeExcel } from "@/helpers/exportFile";
+import { makeExcel } from "@/helpers/exportFileHelper";
 
 export const runtime = "nodejs";
 

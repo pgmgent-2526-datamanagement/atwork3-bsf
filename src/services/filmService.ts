@@ -7,7 +7,7 @@ import type {
   FilmRow,
   ImportFilmInput,
 } from "@/types/film";
-import { publicStorageUrl } from "@/helpers/storageUrl";
+import { publicStorageUrl } from "@/helpers/storageUrlHelper";
 
 type DB = SupabaseClient<Database>;
 type FilmDbRow = Database["public"]["Tables"]["film"]["Row"];
