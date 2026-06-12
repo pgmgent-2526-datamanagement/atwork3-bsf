@@ -22,13 +22,11 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, vote });
-  } catch (err: unknown) {
+  } catch (err: any) {
+    console.error("Error in POST /api/votes/online:", err);
     const message =
-      err instanceof Error
-        ? err.message
-        : typeof err === "string"
-        ? err
-        : "Unexpected server error";
+      err?.message ||
+      (typeof err === "string" ? err : "Unexpected server error");
 
     return NextResponse.json(
       { success: false, error: message },
