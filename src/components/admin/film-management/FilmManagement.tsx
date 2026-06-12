@@ -296,11 +296,11 @@ export function FilmManagement({ initialFilms }: { initialFilms: Film[] }) {
               </label>
 
               <div className={styles.formActions}>
-                <Button type="button" onClick={closeModal}>
-                  Annuleren
-                </Button>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? "Bezig..." : "Opslaan"}
+                </Button>
+                <Button type="button" onClick={closeModal}>
+                  Annuleren
                 </Button>
               </div>
             </form>
