@@ -5,12 +5,22 @@ import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/Button";
 
+import { useToast } from "@/components/ui/Toast";
+
 export function LogoutButton() {
   const router = useRouter();
+  const toast = useToast();
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      toast.success("Succesvol uitgelogd. Tot ziens!");
+      router.push("/login");
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err.message, "Fout bij uitloggen");
+      }
+    }
   }
 
     return (

@@ -89,6 +89,7 @@ export default function EditionResetButton({
         busy={busy}
         onCancel={closeConfirm}
         onConfirm={doReset}
+        confirmPhrase="DELETE"
       />
     </>
   );

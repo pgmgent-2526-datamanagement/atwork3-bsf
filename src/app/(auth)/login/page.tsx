@@ -6,8 +6,11 @@ import styles from "../SignUp.module.css";
 import { authClient } from "@/services/authClient";
 import { Button } from "@/components/ui/Button";
 
+import { useToast } from "@/components/ui/Toast";
+
 export default function SignInPage() {
   const router = useRouter();
+  const toast = useToast();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +24,12 @@ export default function SignInPage() {
 
     try {
       await authClient.login({ email, password });
+      toast.success("Succesvol ingelogd! Welkom terug.");
       router.push("/admin");
     } catch (err) {
       if (err instanceof Error) {
         setErrorMsg(err.message);
+        toast.error(err.message, "Fout bij inloggen");
       }
     } finally {
       setLoading(false);
