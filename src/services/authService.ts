@@ -12,7 +12,7 @@ export const authService = {
     });
 
     if (error) {
-      throw new Error("INVALID_CREDENTIALS");
+      throw new Error(error.message || "INVALID_CREDENTIALS");
     }
 
     const userId = data.user.id;
@@ -35,7 +35,7 @@ export const authService = {
     });
 
     if (error || !data.user) {
-      throw new Error("REGISTER_FAILED");
+      throw new Error(error?.message || "REGISTER_FAILED");
     }
 
     const { error: insertError } = await supabase
@@ -48,7 +48,7 @@ export const authService = {
       });
 
     if (insertError) {
-      throw new Error("ADMIN_INSERT_FAILED");
+      throw new Error(insertError.message || "ADMIN_INSERT_FAILED");
     }
 
     return data.user;
