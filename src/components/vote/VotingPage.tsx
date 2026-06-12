@@ -103,6 +103,7 @@ export function VotingPage({ source, onVoteConfirmed }: VotingPageProps) {
       setBusy(false);
     }
   }
+  
 
   const handleConfirm = () => {
     if (!selectedFilm) return;
