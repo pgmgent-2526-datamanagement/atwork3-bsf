@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer";
+import { supabaseService } from "@/lib/supabaseService";
 import { authService } from "@/services/authService";
 
 export async function POST(req: Request) {
   try {
-    const supabase = await supabaseServer();
     const { email, password, first_name, last_name } = await req.json();
 
     if (!email || !password || !first_name || !last_name) {
@@ -15,7 +14,7 @@ export async function POST(req: Request) {
     }
 
     await authService.registerAdmin(
-      supabase,
+      supabaseService,
       email,
       password,
       first_name,
