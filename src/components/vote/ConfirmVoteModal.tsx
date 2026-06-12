@@ -56,26 +56,27 @@ export function ConfirmVoteModal({
 
               {/* HERO IMAGE */}
               {film.image_url && (
-                <div className={styles["voting-page__modal-hero"]}>
-                  <Image
-                    src={film.image_url}
-                    alt={film.title}
-                    fill
-                    priority
-                    style={{ objectFit: "cover" }}
-                  />
-
-                  <div className={styles["voting-page__modal-overlay"]} />
-
-                  <div className={styles["voting-page__modal-heroText"]}>
-                    <h2>{film.title}</h2>
-                    {film.maker && <p>Door {film.maker}</p>}
+                <div className={styles["voting-page__modal-poster-container"]}>
+                  <div className={styles["voting-page__modal-poster"]}>
+                    <Image
+                      src={film.image_url}
+                      alt={film.title}
+                      fill
+                      priority
+                      style={{ objectFit: "cover" }}
+                    />
                   </div>
                 </div>
               )}
 
               {/* BODY */}
               <div className={styles["voting-page__modal-body"]}>
+                <h2 className={styles["voting-page__modal-title"]}>{film.title}</h2>
+                {film.maker && (
+                  <p className={styles["voting-page__modal-maker"]}>
+                    Door {film.maker}
+                  </p>
+                )}
                 <p className={styles["voting-page__modal-description"]}>
                   {film.tagline}
                 </p>

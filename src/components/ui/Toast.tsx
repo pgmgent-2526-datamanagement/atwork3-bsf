@@ -85,7 +85,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
       const toast: ToastItem = {
         id,
-        durationMs: t.durationMs ?? 5200,
+        durationMs: t.durationMs ?? 3000,
         ...t,
       };
 
