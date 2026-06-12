@@ -156,6 +156,16 @@
   margin-top: 8px;
 }
 
+.formActions button:nth-child(2) {
+  background-image: none !important; /* override any gradients */
+  background-color: #dc2626;
+  color: white;
+}
+
+.formActions button:nth-child(2):hover {
+  background-color: #b91c1c;
+}
+
 .error {
   color: #b00020;
   font-size: 14px;
