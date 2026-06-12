@@ -71,6 +71,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, film });
   } catch (err) {
+    console.error("CREATE_FILM_ERROR:", err);
     if (err instanceof Error) {
       if (err.message === "UNAUTHORIZED") {
         return NextResponse.json(

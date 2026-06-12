@@ -49,9 +49,40 @@ export const filmService = {
 
   // CREATE FILM
   async createFilm(supabase: DB, input: CreateFilmInput): Promise<FilmRow> {
+    // 1) Find the active edition
+    const { data: edition, error: editionError } = await supabase
+      .from("edition")
+      .select("id")
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (editionError) throw editionError;
+    if (!edition) {
+      throw new Error("Geen actieve editie gevonden.");
+    }
+
+    // 2) Find the highest film number in the active edition to get the next one
+    const { data: films, error: numberError } = await (supabase as any)
+      .from("film")
+      .select("number")
+      .eq("edition_id", edition.id)
+      .order("number", { ascending: false })
+      .limit(1);
+
+    if (numberError) throw numberError;
+    const maxNumber = films && films.length > 0 ? (films[0].number as number) : 0;
+    const nextNumber = maxNumber + 1;
+
+    // 3) Insert the film with edition_id and the next number
+    const insertPayload = {
+      ...input,
+      edition_id: edition.id,
+      number: nextNumber,
+    } as any;
+
     const { data, error } = await supabase
       .from("film")
-      .insert(input)
+      .insert(insertPayload)
       .select("*")
       .single<FilmDbRow>();
 
