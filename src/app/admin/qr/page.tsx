@@ -12,6 +12,13 @@ type Session = {
 
 export default function AdminQRPage() {
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -32,17 +39,20 @@ export default function AdminQRPage() {
 
   return (
     <div style={{ display: "flex", gap: "3rem" }}>
-      {sessions.map((s) => (
-        <div key={s.id} style={{ textAlign: "center" }}>
-          <QRCodeBlock
-            title={s.type === "zaal" ? "Zaal" : "Online"}
-            description="Scan om te stemmen"
-            imageSrc={`/qr/${s.type}.png`}
-            endTime={s.end_time}
-          />
-          <CountdownRing endTime={s.end_time} />
-        </div>
-      ))}
+      {sessions.map((s) => {
+        const voteUrl = origin ? `${origin}/vote/${s.type}` : "";
+        return (
+          <div key={s.id} style={{ textAlign: "center" }}>
+            <QRCodeBlock
+              title={s.type === "zaal" ? "Zaal" : "Online"}
+              description="Scan om te stemmen"
+              value={voteUrl}
+              endTime={s.end_time}
+            />
+            <CountdownRing endTime={s.end_time} />
+          </div>
+        );
+      })}
     </div>
   );
 }
