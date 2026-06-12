@@ -6,41 +6,46 @@
 
 .subtext {
   color: #4b5563;
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 /******** EXPORT GRID ********/
 .exportGrid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .exportGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.exportButton {
-  padding: 1.5rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-family: "Forum", sans-serif;
+.exportCard,
+.importCard {
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
   background: white;
-  cursor: pointer;
-  transition: 0.2s;
-  text-align: left;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.exportButton:hover {
-  border-color: #3b82f6;
-  background-color: #eff6ff;
+.exportCard:hover,
+.importCard:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e1;
 }
 
 .exportIcon {
-  width: 2rem;
-  height: 2rem;
-  margin-bottom: 0.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .exportIconGreen {
@@ -51,36 +56,341 @@
   color: #7c3aed;
 }
 
-.exportIconBlue {
-  color: #2563eb;
-}
-
 .exportTitle {
+  font-size: 1.35rem;
   font-weight: 600;
+  margin: 0;
+  color: #1f2937;
+  font-family: "Forum", sans-serif;
 }
 
 .exportDescription {
   font-size: 0.875rem;
-  color: #4b5563;
+  color: #6b7280;
+  margin: 0;
 }
 
-/******** QUICK EXPORT ********/
-.quickExport {
-  margin-top: 1rem;
-}
-
+/******** QUICK EXPORT & BUTTONS ********/
 .quickExportButton {
-  padding: 0.35rem 0.75rem; /* kleiner */
-  font-size: 0.85rem; /* kleiner tekst */
   width: fit-content;
-  margin-top: 3rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+
+  background: linear-gradient(to right, #059669, #4d8918);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: "Forum", sans-serif;
+
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  margin-top: auto; /* Push to the bottom of the card */
+}
+
+.quickExportButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+}
+
+.quickExportButton:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+/******** IMPORT CARD & CONTROLS ********/
+.importControls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 0.75rem;
+  padding: 2.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.dropzone:hover {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.dropzoneActive {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+  transform: scale(1.01);
+}
+
+.dropzoneText {
+  font-size: 0.9rem;
+  color: #374151;
+  font-weight: 600;
   font-family: "Forum", sans-serif;
 }
 
-/******** HISTORY ********/
-.optionsTitle {
-  margin-bottom: 0.5rem;
+.dropzoneSubtext {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+/* Selected File Display */
+.selectedFileCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+}
+
+.selectedFileInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.selectedFileName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #166534;
+  word-break: break-all;
+}
+
+.selectedFileSize {
+  font-size: 0.75rem;
+  color: #15803d;
+}
+
+.removeFileButton {
+  background: none;
+  border: none;
+  color: #b91c1c;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: "Forum", sans-serif;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: background 0.2s;
+}
+
+.removeFileButton:hover {
+  background: #fee2e2;
+}
+
+/* Action buttons */
+.importActionButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.importPrimaryButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+
+  background: linear-gradient(to right, #6366f1, #a855f7);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: "Forum", sans-serif;
+
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.importPrimaryButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.importPrimaryButton:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.importPrimaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.importSecondaryButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+
+  background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: "Forum", sans-serif;
+
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.importSecondaryButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.importSecondaryButton:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.importSecondaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.importInfo {
+  margin: 0.5rem 0 0 0;
+  color: #16a34a;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.importError {
+  margin: 0.5rem 0 0 0;
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Preview Table */
+.previewWrap {
   margin-top: 1rem;
+  overflow: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background: white;
+  max-height: 250px;
+}
+
+.previewTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.previewTable th {
+  position: sticky;
+  top: 0;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: left;
+}
+
+.previewTable td {
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  color: #334155;
+  vertical-align: top;
+}
+
+.previewTable tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.previewTable tr:last-child td {
+  border-bottom: none;
+}
+
+/******** HISTORY ********/
+.historyContainer {
+  margin-top: 2.5rem;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 2rem;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.historyTitle {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  font-family: "Forum", sans-serif;
+}
+
+.clearHistoryButton {
+  background: transparent;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: "Forum", sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clearHistoryButton:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  transform: translateY(-1px);
+}
+
+.clearHistoryButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.clearHistoryButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+  color: #9ca3af;
 }
 
 .historyList {
@@ -93,256 +403,70 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  background: rgb(96%, 96%, 98%);
-  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.historyItem:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
 
 .historyItemLeft {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .historyIcon {
-  width: 1rem;
-  height: 1rem;
-  color: #4b5563;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6b7280;
 }
 
 .historyFormat {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  font-family: "Forum", sans-serif;
 }
 
 .historyDate {
   font-size: 0.75rem;
-  color: #4b5563;
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
 }
 
 .historyItemRight {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.historySize {
-  font-size: 0.75rem;
-  color: #4b5563;
 }
 
 .historyDownload {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.quickExportButton {
-  width: fit-content;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.75rem; /* kleiner */
-
-  background: linear-gradient(to right, rgb(5, 150, 105), #4d8918);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-
-  font-size: 0.85rem;
-  font-weight: 600;
-
-  cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
-}
-
-/* Hover effect */
-.quickExportButton:hover {
-  background: rgb(4, 121, 84); /* donkerder blauw */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
-}
-
-/* Active click (tap) effect */
-.quickExportButton:active {
-  transform: scale(0.98);
-  box-shadow: none;
-}
-
-/******** IMPORT CARD (NEW) ********/
-.importCard {
-  padding: 1.5rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-family: "Forum", sans-serif;
   background: white;
-}
-
-.importCard:hover {
-  border-color: #3b82f6;
-  background-color: #eff6ff;
-}
-
-.importControls {
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-.importFile {
-  font-family: "Forum", sans-serif;
-}
-
-.importActionButtons {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.importPrimaryButton {
-  width: fit-content;
-  display: flex;
+  align-items: center;
   justify-content: center;
-  font-family: "Forum", sans-serif;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.75rem; /* kleiner */
-
-  background: linear-gradient(to right, #6366f1, #a855f7);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-
-  font-size: 0.85rem;
-  font-weight: 600;
-
-  cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.importPrimaryButton:hover {
-  background: #6d28d9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(109, 40, 217, 0.25);
-}
-
-.importPrimaryButton:active {
-  transform: scale(0.98);
-  box-shadow: none;
-}
-
-.importSecondaryButton {
-  padding: 0.35rem 0.75rem; /* kleiner */
-  border-radius: 6px;
-  color: #eff1f3;
-  font-family: "Forum", sans-serif;
-  border: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);
-  cursor: pointer;
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition:
-    background-color 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
-}
-
-.importSecondaryButton:hover {
-  background: #d92828;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(109, 40, 217, 0.25);
-}
-
-.importSecondaryButton:active {
-  transform: scale(0.98);
-  box-shadow: none;
-}
-
-.hiddenFileInput {
-  display: none;
-}
-
-.uploadButton {
-  padding: 0.35rem 0.75rem; /* kleiner */
-  border-radius: 6px;
-  color: rgb(0, 0, 0);
-  font-weight: 500;
-  font-size: 0.75rem; /* kleiner tekst */
-  cursor: pointer;
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease;
-}
-
-.uploadButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
-}
-
-.importInfo {
-  margin-top: 0.75rem;
-  color: #16a34a;
-  font-size: 0.9rem;
-}
-
-.importError {
-  margin-top: 0.75rem;
-  color: #ef4444;
-  font-size: 0.9rem;
-}
-
-/* Preview table */
-.previewWrap {
-  margin-top: 0.75rem;
-  overflow: auto;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  background: white;
-}
-
-.previewTable {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
-}
-
-.previewTable th,
-.previewTable td {
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-  font-size: 0.85rem;
+.historyDownload:hover {
+  background: #f3f4f6;
   color: #111827;
-  vertical-align: top;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
 }
 
-.previewTable th {
-  position: sticky;
-  top: 0;
-  background: #f9fafb;
-  font-weight: 700;
-}
-
-.historyList {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.5rem;
+.historyDownload:active {
+  transform: scale(0.95);
 }

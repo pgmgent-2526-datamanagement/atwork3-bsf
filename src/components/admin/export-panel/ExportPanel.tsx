@@ -55,7 +55,26 @@ export default function ExportPanel() {
   const [info, setInfo] = useState("");
   const [history, setHistory] = useState<ExportHistoryItem[]>([]);
   const [isImporting, setIsImporting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile) {
+      onPickFile(droppedFile);
+    }
+  };
 
   const preview: PreviewRow[] = useMemo(() => {
     return rawRows.map((r) => {
@@ -195,7 +214,7 @@ export default function ExportPanel() {
       {/* Export + Import cards next to each other */}
       <div className={styles.exportGrid}>
         {/* Excel Export Card */}
-        <article className={styles.exportButton}>
+        <article className={styles.exportCard}>
           <FileSpreadsheet
             className={`${styles.exportIcon} ${styles.exportIconGreen}`}
           />
@@ -218,33 +237,63 @@ export default function ExportPanel() {
           </p>
 
           <div className={styles.importControls}>
-            <label className={styles.uploadButton}>
-              <Upload size={16} /> Kies CSV bestand
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".csv"
-                className={styles.hiddenFileInput}
-                onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
-              />
-            </label>
-            <div className={styles.importActionButtons}>
-              <Button
-                className={styles.importPrimaryButton}
-                onClick={doImport}
-                disabled={!file || !rawRows.length || isImporting}
+            {!file ? (
+              <label
+                className={`${styles.dropzone} ${isDragging ? styles.dropzoneActive : ""}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
               >
-                <Upload size={16} />
-                {isImporting ? "Importeren..." : "Importeer films"}
-              </Button>
-              <Button
-                className={styles.importSecondaryButton}
-                onClick={resetImport}
-                disabled={!file && !rawRows.length}
-              >
-                Annuleren
-              </Button>
-            </div>
+                <Upload size={24} className={styles.exportIconPurple} />
+                <span className={styles.dropzoneText}>Kies een CSV bestand of sleep het hierheen</span>
+                <span className={styles.dropzoneSubtext}>Alleen .csv bestanden</span>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv"
+                  className={styles.hiddenFileInput}
+                  onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+                />
+              </label>
+            ) : (
+              <div className={styles.selectedFileCard}>
+                <div className={styles.selectedFileInfo}>
+                  <FileSpreadsheet size={20} className={styles.exportIconPurple} />
+                  <div>
+                    <div className={styles.selectedFileName}>{file.name}</div>
+                    <div className={styles.selectedFileSize}>
+                      {(file.size / 1024).toFixed(1)} KB
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={resetImport}
+                  className={styles.removeFileButton}
+                >
+                  Verwijderen
+                </button>
+              </div>
+            )}
+
+            {file && (
+              <div className={styles.importActionButtons}>
+                <Button
+                  className={styles.importPrimaryButton}
+                  onClick={doImport}
+                  disabled={!rawRows.length || isImporting}
+                >
+                  <Upload size={16} />
+                  {isImporting ? "Importeren..." : "Importeer films"}
+                </Button>
+                <Button
+                  className={styles.importSecondaryButton}
+                  onClick={resetImport}
+                >
+                  Annuleren
+                </Button>
+              </div>
+            )}
           </div>
 
           {error && <p className={styles.importError}>{error}</p>}
@@ -277,10 +326,10 @@ export default function ExportPanel() {
 
       <div>
         <div className={styles.historyContainer}>
-          <header className={styles.historyList}>
-            <h3 className={styles.optionsTitle}>Export Geschiedenis</h3>
+          <header className={styles.historyHeader}>
+            <h3 className={styles.historyTitle}>Export Geschiedenis</h3>
             <Button
-              className={styles.importSecondaryButton}
+              className={styles.clearHistoryButton}
               onClick={() => clearExportHistory()}
               disabled={!history.length}
             >
@@ -291,29 +340,31 @@ export default function ExportPanel() {
           {!history.length ? (
             <p className={styles.subtext}>Nog geen exports gedaan.</p>
           ) : (
-            history.map((item) => (
-              <div key={item.id} className={styles.historyItem}>
-                <div className={styles.historyItemLeft}>
-                  <Calendar className={styles.historyIcon} />
-                  <div>
-                    <p className={styles.historyFormat}>{item.format} Export</p>
-                    <p className={styles.historyDate}>
-                      {formatExportHistoryDate(item.dateIso)}
-                    </p>
+            <div className={styles.historyList}>
+              {history.map((item) => (
+                <div key={item.id} className={styles.historyItem}>
+                  <div className={styles.historyItemLeft}>
+                    <Calendar className={styles.historyIcon} />
+                    <div>
+                      <p className={styles.historyFormat}>{item.format} Export</p>
+                      <p className={styles.historyDate}>
+                        {formatExportHistoryDate(item.dateIso)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className={styles.historyItemRight}>
+                    <Button
+                      className={styles.historyDownload}
+                      onClick={() => (window.location.href = item.url)}
+                      title="Opnieuw downloaden"
+                    >
+                      <Download size={16} />
+                    </Button>
                   </div>
                 </div>
-
-                <div className={styles.historyItemRight}>
-                  <Button
-                    className={styles.historyDownload}
-                    onClick={() => (window.location.href = item.url)}
-                    title="Opnieuw downloaden"
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </div>
